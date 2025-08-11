@@ -22,44 +22,45 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '../stores/authStore';
-import { useWorkoutStore } from '../stores/workoutStore';
-import { useGoalStore } from '../stores/goalStore';
+// import { useWorkoutStore } from '../stores/workoutStore';
+// import { useGoalStore } from '../stores/goalStore';
 
 const schema = yup.object({
   firstName: yup.string().required('First name is required'),
   lastName: yup.string().required('Last name is required'),
   email: yup.string().email('Invalid email').required('Email is required'),
-  dateOfBirth: yup.string().required('Date of birth is required'),
+  dob: yup.string().required('Date of birth is required'),
   gender: yup.string().oneOf(['male', 'female', 'other']).required('Gender is required'),
   height: yup.number().positive('Height must be positive').required('Height is required'),
   weight: yup.number().positive('Weight must be positive').required('Weight is required'),
-  fitnessLevel: yup.string().oneOf(['beginner', 'intermediate', 'advanced']).required('Fitness level is required'),
+  level: yup.string().oneOf(['beginner', 'intermediate', 'advanced']).required('Fitness level is required'),
 });
 
 type FormData = yup.InferType<typeof schema>;
 
-const StatCard: React.FC<{
-  title: string;
-  value: string | number;
-  icon: React.ReactNode;
-  color: string;
-}> = ({ title, value, icon, color }) => (
-  <div className={`bg-gradient-to-r ${color} text-white p-4 rounded-xl`}>
-    <div className="flex items-center justify-between">
-      <div>
-        <p className="text-white/80 text-sm">{title}</p>
-        <p className="text-2xl font-bold">{value}</p>
-      </div>
-      <div className="opacity-80">{icon}</div>
-    </div>
-  </div>
-);
+// const StatCard: React.FC<{
+//   title: string;
+//   value: string | number;
+//   icon: React.ReactNode;
+//   color: string;
+// }> = ({ title, value, icon, color }) => (
+//   <div className={`bg-gradient-to-r ${color} text-white p-4 rounded-xl`}>
+//     <div className="flex items-center justify-between">
+//       <div>
+//         <p className="text-white/80 text-sm">{title}</p>
+//         <p className="text-2xl font-bold">{value}</p>
+//       </div>
+//       <div className="opacity-80">{icon}</div>
+//     </div>
+//   </div>
+// );
 
 export const ProfilePage: React.FC = () => {
+
   const [isEditing, setIsEditing] = useState(false);
   const { user, updateProfile } = useAuthStore();
-  const { workouts } = useWorkoutStore();
-  const { goals } = useGoalStore();
+  // const { workouts } = useWorkoutStore();
+  // const { goals } = useGoalStore();
 
   const {
     register,
@@ -72,11 +73,11 @@ export const ProfilePage: React.FC = () => {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      dateOfBirth: user.dateOfBirth,
+      dob: user.dob,
       gender: user.gender,
       height: user.height,
       weight: user.weight,
-      fitnessLevel: user.fitnessLevel,
+      level: user.level,
     } : undefined,
   });
 
@@ -99,9 +100,9 @@ export const ProfilePage: React.FC = () => {
     return <div>Loading...</div>;
   }
 
-  const totalWorkouts = workouts.length;
-  const totalCalories = workouts.reduce((sum, w) => sum + w.caloriesBurned, 0);
-  const completedGoals = goals.filter(g => g.isCompleted).length;
+  // const totalWorkouts = workouts.length;
+  // const totalCalories = workouts.reduce((sum, w) => sum + w.caloriesBurned, 0);
+  // const completedGoals = goals.filter(g => g.isCompleted).length;
   const memberSince = new Date(user.createdAt).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -140,7 +141,7 @@ export const ProfilePage: React.FC = () => {
               </h2>
               <p className="text-blue-100 mb-2">{user.email}</p>
               <p className="text-blue-200 text-sm">
-                Member since {memberSince} • {user.fitnessLevel.charAt(0).toUpperCase() + user.fitnessLevel.slice(1)} Level
+                Member since {memberSince} • {user.level.charAt(0).toUpperCase() + user.level.slice(1)} Level
               </p>
             </div>
             <button
@@ -227,13 +228,13 @@ export const ProfilePage: React.FC = () => {
                   <div className="relative">
                     <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                     <input
-                      {...register('dateOfBirth')}
+                      {...register('dob')}
                       type="date"
                       className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                     />
                   </div>
-                  {errors.dateOfBirth && (
-                    <p className="text-red-500 text-sm mt-1">{errors.dateOfBirth.message}</p>
+                  {errors.dob && (
+                    <p className="text-red-500 text-sm mt-1">{errors.dob.message}</p>
                   )}
                 </div>
 
@@ -259,15 +260,15 @@ export const ProfilePage: React.FC = () => {
                     Fitness Level
                   </label>
                   <select
-                    {...register('fitnessLevel')}
+                    {...register('level')}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   >
                     <option value="beginner">Beginner</option>
                     <option value="intermediate">Intermediate</option>
                     <option value="advanced">Advanced</option>
                   </select>
-                  {errors.fitnessLevel && (
-                    <p className="text-red-500 text-sm mt-1">{errors.fitnessLevel.message}</p>
+                  {errors.level && (
+                    <p className="text-red-500 text-sm mt-1">{errors.level.message}</p>
                   )}
                 </div>
               </div>
@@ -346,7 +347,7 @@ export const ProfilePage: React.FC = () => {
                   <div className="flex items-center">
                     <Calendar className="h-5 w-5 text-gray-400 mr-3" />
                     <span className="text-gray-600 w-24">Birth:</span>
-                    <span className="font-medium">{new Date(user.dateOfBirth).toLocaleDateString()}</span>
+                    <span className="font-medium">{new Date(user.dob).toLocaleDateString()}</span>
                   </div>
                   <div className="flex items-center">
                     <span className="text-gray-600 w-24 ml-8">Gender:</span>
@@ -371,7 +372,7 @@ export const ProfilePage: React.FC = () => {
                   <div className="flex items-center">
                     <Activity className="h-5 w-5 text-gray-400 mr-3" />
                     <span className="text-gray-600 w-24">Level:</span>
-                    <span className="font-medium capitalize">{user.fitnessLevel}</span>
+                    <span className="font-medium capitalize">{user.level}</span>
                   </div>
                   <div className="flex items-center">
                     <span className="text-gray-600 w-24 ml-8">BMI:</span>
@@ -387,7 +388,7 @@ export const ProfilePage: React.FC = () => {
       </motion.div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <StatCard
           title="Total Workouts"
           value={totalWorkouts}
@@ -406,7 +407,7 @@ export const ProfilePage: React.FC = () => {
           icon={<Target className="h-6 w-6" />}
           color="from-green-500 to-green-600"
         />
-      </div>
+      </div> */}
 
       {/* Settings Sections */}
       {/* <div className="grid md:grid-cols-2 gap-8">

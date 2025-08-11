@@ -3,15 +3,14 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
-  dateOfBirth: string;
+  dob: string;
   gender: "male" | "female" | "other";
   height: number; // in cm
   weight: number; // in kg
-  fitnessLevel: "beginner" | "intermediate" | "advanced";
+  level: "beginner" | "intermediate" | "advanced";
   profilePicture?: string;
   createdAt: string;
 }
-
 export interface Workout {
   id: string;
   userId: string;

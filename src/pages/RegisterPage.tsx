@@ -6,7 +6,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { Eye, EyeOff, Dumbbell, Mail, Lock, User, Calendar, Ruler, Weight } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { useAuthStore } from '../stores/authStore';
+// import { useAuthStore } from '../stores/authStore';
+import { useRegister } from '../hooks/useAuth';
 
 const schema = yup.object({
   email: yup.string().email('Invalid email').required('Email is required'),
@@ -14,11 +15,11 @@ const schema = yup.object({
   confirmPassword: yup.string().oneOf([yup.ref('password')], 'Passwords must match').required('Confirm password is required'),
   firstName: yup.string().required('First name is required'),
   lastName: yup.string().required('Last name is required'),
-  dateOfBirth: yup.string().required('Date of birth is required'),
+  dob: yup.string().required('Date of birth is required'),
   gender: yup.string().oneOf(['male', 'female', 'other']).required('Gender is required'),
   height: yup.number().positive('Height must be positive').required('Height is required'),
   weight: yup.number().positive('Weight must be positive').required('Weight is required'),
-  fitnessLevel: yup.string().oneOf(['beginner', 'intermediate', 'advanced']).required('Fitness level is required'),
+  level: yup.string().oneOf(['beginner', 'intermediate', 'advanced']).required('Fitness level is required'),
 });
 
 type FormData = yup.InferType<typeof schema>;
@@ -28,7 +29,10 @@ export const RegisterPage: React.FC = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { register: registerUser } = useAuthStore();
+
+  // const { register: registerUser } = useAuthStore();
+
+  const { mutateAsync: registerUser } = useRegister(); // Use useRegister hook
 
   const {
     register,
@@ -192,13 +196,13 @@ export const RegisterPage: React.FC = () => {
                 <div className="relative">
                   <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                   <input
-                    {...register('dateOfBirth')}
+                    {...register('dob')}
                     type="date"
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   />
                 </div>
-                {errors.dateOfBirth && (
-                  <p className="text-red-500 text-sm mt-1">{errors.dateOfBirth.message}</p>
+                {errors.dob && (
+                  <p className="text-red-500 text-sm mt-1">{errors.dob.message}</p>
                 )}
               </div>
 
@@ -225,7 +229,7 @@ export const RegisterPage: React.FC = () => {
                   Fitness Level
                 </label>
                 <select
-                  {...register('fitnessLevel')}
+                  {...register('level')}
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 >
                   <option value="">Select level</option>
@@ -233,8 +237,8 @@ export const RegisterPage: React.FC = () => {
                   <option value="intermediate">Intermediate</option>
                   <option value="advanced">Advanced</option>
                 </select>
-                {errors.fitnessLevel && (
-                  <p className="text-red-500 text-sm mt-1">{errors.fitnessLevel.message}</p>
+                {errors.level && (
+                  <p className="text-red-500 text-sm mt-1">{errors.level.message}</p>
                 )}
               </div>
             </div>

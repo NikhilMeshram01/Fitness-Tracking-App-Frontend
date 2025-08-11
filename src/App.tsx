@@ -21,7 +21,14 @@ import { BlogPage } from "./pages/BlogPage";
 import { BlogPostPage } from "./pages/BlogPostPage";
 import { useAuthStore } from "./stores/authStore";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions:{
+    queries:{
+      refetchOnWindowFocus: false,
+      retry: 1, // retry once on failure
+    }
+  }
+});
 
 function App() {
   const { isAuthenticated } = useAuthStore();
@@ -29,7 +36,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-500">
           <Toaster
             position="top-right"
             toastOptions={{

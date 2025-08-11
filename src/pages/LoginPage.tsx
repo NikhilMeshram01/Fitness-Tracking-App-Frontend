@@ -6,7 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { Eye, EyeOff, Dumbbell, Mail, Lock } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { useAuthStore } from '../stores/authStore';
+import { useLogin } from '../hooks/useAuth';
 
 const schema = yup.object({
   email: yup.string().email('Invalid email').required('Email is required'),
@@ -20,7 +20,8 @@ export const LoginPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { login } = useAuthStore();
+
+  const { mutateAsync: loginUser } = useLogin(); // Use useRegister hook
 
   const from = location.state?.from?.pathname || '/dashboard';
 
@@ -35,7 +36,8 @@ export const LoginPage: React.FC = () => {
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     try {
-      const success = await login(data.email, data.password);
+      // const {email, password} = data
+      const success = await loginUser(data);
       if (success) {
         toast.success('Welcome back!');
         navigate(from, { replace: true });
