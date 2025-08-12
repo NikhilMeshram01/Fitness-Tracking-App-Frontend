@@ -1,12 +1,14 @@
+
+
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Navigate, useNavigate } from 'react-router-dom';
 import {
   Plus,
   Activity,
   Clock,
   Zap,
   Calendar,
-  Filter,
   Search,
   Edit,
   Trash2,
@@ -15,8 +17,10 @@ import {
   Users,
   Target,
 } from 'lucide-react';
-import { useWorkoutStore } from '../stores/workoutStore';
+import { useWorkout, useWorkouts, useCreateWorkout, useUpdateWorkout, useDeleteWorkout } from '../hooks/useWorkout';
+import { useAuthStore } from '../stores/authStore';
 import { Workout } from '../types';
+import toast from 'react-hot-toast';
 
 const workoutTypeIcons = {
   cardio: Heart,
@@ -37,12 +41,13 @@ const workoutTypeColors = {
 };
 
 interface WorkoutFormData {
-  type: Workout['type'];
+  exerciseType: Workout['exerciseType'];
   name: string;
   duration: number;
   caloriesBurned: number;
-  date: string;
+  workoutDate: string;
   notes?: string;
+  // user: string;
 }
 
 const WorkoutCard: React.FC<{
@@ -50,8 +55,8 @@ const WorkoutCard: React.FC<{
   onEdit: (workout: Workout) => void;
   onDelete: (id: string) => void;
 }> = ({ workout, onEdit, onDelete }) => {
-  const Icon = workoutTypeIcons[workout.type];
-  const colorClass = workoutTypeColors[workout.type];
+  const Icon = workoutTypeIcons[workout.exerciseType];
+  const colorClass = workoutTypeColors[workout.exerciseType];
 
   return (
     <motion.div
@@ -67,7 +72,7 @@ const WorkoutCard: React.FC<{
           </div>
           <div>
             <h3 className="text-lg font-bold text-gray-900">{workout.name}</h3>
-            <p className="text-sm text-gray-500 capitalize">{workout.type}</p>
+            <p className="text-sm text-gray-500 capitalize">{workout.exerciseType}</p>
           </div>
         </div>
         <div className="flex items-center space-x-2">
@@ -78,7 +83,7 @@ const WorkoutCard: React.FC<{
             <Edit className="h-4 w-4" />
           </button>
           <button
-            onClick={() => onDelete(workout.id)}
+            onClick={() => onDelete(workout._id)}
             className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
           >
             <Trash2 className="h-4 w-4" />
@@ -102,7 +107,7 @@ const WorkoutCard: React.FC<{
           </div>
         </div>
         <div className="text-center">
-          <div className="text-2xl font-bold text-gray-900">{workout.exercises.length}</div>
+          <div className="text-2xl font-bold text-gray-900">{workout.exercises?.length}</div>
           <div className="text-xs text-gray-500 flex items-center justify-center mt-1">
             <Activity className="h-3 w-3 mr-1" />
             Exercises
@@ -114,7 +119,7 @@ const WorkoutCard: React.FC<{
         <div className="flex items-center justify-between">
           <div className="flex items-center text-sm text-gray-500">
             <Calendar className="h-4 w-4 mr-1" />
-            {new Date(workout.date).toLocaleDateString()}
+            {new Date(workout.workoutDate).toLocaleDateString()}
           </div>
           {workout.notes && (
             <div className="text-xs text-gray-400 max-w-32 truncate">
@@ -134,15 +139,17 @@ const WorkoutForm: React.FC<{
   editData?: Workout | null;
 }> = ({ isOpen, onClose, onSubmit, editData }) => {
   const [formData, setFormData] = useState<WorkoutFormData>({
-    type: editData?.type || 'cardio',
+    exerciseType: editData?.exerciseType || 'cardio',
     name: editData?.name || '',
     duration: editData?.duration || 0,
     caloriesBurned: editData?.caloriesBurned || 0,
-    date: editData?.date || new Date().toISOString().split('T')[0],
+    workoutDate: editData?.workoutDate || new Date().toISOString().split('T')[0],
     notes: editData?.notes || '',
+    // user: ""
   });
 
   const handleSubmit = (e: React.FormEvent) => {
+    console.log('WorkoutForm submit button hit')
     e.preventDefault();
     onSubmit(formData);
     onClose();
@@ -170,8 +177,8 @@ const WorkoutForm: React.FC<{
               Workout Type
             </label>
             <select
-              value={formData.type}
-              onChange={(e) => setFormData({ ...formData, type: e.target.value as Workout['type'] })}
+              value={formData.exerciseType}
+              onChange={(e) => setFormData({ ...formData, exerciseType: e.target.value as Workout['exerciseType'] })}
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               required
             >
@@ -234,8 +241,8 @@ const WorkoutForm: React.FC<{
             </label>
             <input
               type="date"
-              value={formData.date}
-              onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+              value={formData.workoutDate}
+              onChange={(e) => setFormData({ ...formData, workoutDate: e.target.value })}
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               required
             />
@@ -276,23 +283,37 @@ const WorkoutForm: React.FC<{
 };
 
 export const WorkoutsPage: React.FC = () => {
-  const { workouts, addWorkout, updateWorkout, deleteWorkout } = useWorkoutStore();
+  const navigate = useNavigate();
+
+  const { user, isAuthenticated } = useAuthStore();
+
+  const { data: workouts = [], isLoading, isError, error } = useWorkouts(user?._id || '');
+  console.log('--->>', workouts)
+  const createWorkoutMutation = useCreateWorkout();
+  const updateWorkoutMutation = useUpdateWorkout();
+  const deleteWorkoutMutation = useDeleteWorkout();
+
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingWorkout, setEditingWorkout] = useState<Workout | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'date' | 'duration' | 'calories'>('date');
 
+  // Redirect to login if not authenticated
+  if (!isAuthenticated || !user) {
+    return <Navigate to="/login" state={{ from: '/workouts' }} replace />;
+  }
+
   const filteredWorkouts = workouts
     .filter(workout => {
       const matchesSearch = workout.name.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesType = filterType === 'all' || workout.type === filterType;
+      const matchesType = filterType === 'all' || workout.exerciseType === filterType;
       return matchesSearch && matchesType;
     })
     .sort((a, b) => {
       switch (sortBy) {
         case 'date':
-          return new Date(b.date).getTime() - new Date(a.date).getTime();
+          return new Date(b.workoutDate).getTime() - new Date(a.workoutDate).getTime();
         case 'duration':
           return b.duration - a.duration;
         case 'calories':
@@ -304,18 +325,44 @@ export const WorkoutsPage: React.FC = () => {
 
   const handleFormSubmit = (data: WorkoutFormData) => {
     if (editingWorkout) {
-      updateWorkout(editingWorkout.id, {
-        ...data,
-        exercises: editingWorkout.exercises, // Keep existing exercises
-      });
+      console.log('workout creation hit from pages/WorkoutsPAge.tsx')
+      updateWorkoutMutation.mutate(
+        {
+          id: editingWorkout._id,
+          updatedData: {
+            ...data,
+            exercises: editingWorkout.exercises, // Keep existing exercises
+          },
+        },
+        {
+          onSuccess: () => {
+            setEditingWorkout(null);
+            setIsFormOpen(false);
+            toast.success('Workout updated successfully');
+          },
+          onError: (error: any) => {
+            toast.error(`Failed to update workout: ${error.message}`);
+          },
+        }
+      );
     } else {
-      addWorkout({
-        ...data,
-        userId: '1',
-        exercises: [],
-      });
+      createWorkoutMutation.mutate(
+        {
+          ...data,
+          userId: user._id,
+          exercises: [],
+        },
+        {
+          onSuccess: () => {
+            setIsFormOpen(false);
+            toast.success('Workout added successfully');
+          },
+          onError: (error: any) => {
+            toast.error(`Failed to create workout: ${error.message}`);
+          },
+        }
+      );
     }
-    setEditingWorkout(null);
   };
 
   const handleEdit = (workout: Workout) => {
@@ -325,11 +372,43 @@ export const WorkoutsPage: React.FC = () => {
 
   const handleDelete = (id: string) => {
     if (window.confirm('Are you sure you want to delete this workout?')) {
-      deleteWorkout(id);
+      deleteWorkoutMutation.mutate(id, {
+        onSuccess: () => {
+          toast.success('Workout deleted successfully');
+        },
+        onError: (error: any) => {
+          toast.error(`Failed to delete workout: ${error.message}`);
+        },
+      });
     }
   };
 
   const workoutTypes = ['all', 'cardio', 'strength', 'yoga', 'flexibility', 'sports', 'other'];
+
+  if (isLoading) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
+        <Activity className="h-16 w-16 text-gray-300 mx-auto mb-4 animate-spin" />
+        <p className="text-gray-600">Loading workouts...</p>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
+        <Activity className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+        <h3 className="text-xl font-semibold text-gray-600 mb-2">Error loading workouts</h3>
+        <p className="text-gray-500 mb-6">{error?.message || 'An error occurred'}</p>
+        <button
+          onClick={() => navigate(0)} // Refresh the page to retry
+          className="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -392,7 +471,7 @@ export const WorkoutsPage: React.FC = () => {
               <p className="text-purple-100 text-sm">This Week</p>
               <p className="text-3xl font-bold">
                 {workouts.filter(w => {
-                  const workoutDate = new Date(w.date);
+                  const workoutDate = new Date(w.workoutDate);
                   const now = new Date();
                   const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
                   return workoutDate >= weekAgo && workoutDate <= now;
@@ -453,9 +532,9 @@ export const WorkoutsPage: React.FC = () => {
       {/* Workouts Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <AnimatePresence>
-          {filteredWorkouts.map((workout) => (
+          {filteredWorkouts?.map((workout) => (
             <WorkoutCard
-              key={workout.id}
+              key={workout._id}
               workout={workout}
               onEdit={handleEdit}
               onDelete={handleDelete}

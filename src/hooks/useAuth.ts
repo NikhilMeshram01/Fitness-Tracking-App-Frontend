@@ -60,7 +60,7 @@ import {
   loginUser,
   registerUser,
   logoutUser,
-  getCurrentUser,
+  // getCurrentUser,
 } from "../apis/auth.api";
 import { useAuthStore } from "../stores/authStore";
 import { User } from "../types";
@@ -69,7 +69,6 @@ export const useLogin = () => {
   const setUser = useAuthStore((s) => s.setUser);
   return useMutation({
     mutationFn: (data: { email: string; password: string }) => {
-      console.log("useAuth.ts -->", data.email, data.password);
       return loginUser(data.email, data.password);
     },
     onSuccess: (user) => {
@@ -98,6 +97,7 @@ export const useRegister = () => {
 export const useLogout = () => {
   const logout = useAuthStore((s) => s.logout);
   const queryClient = useQueryClient();
+  console.log("log out from useAUth hook");
   return useMutation({
     mutationFn: logoutUser,
     onSuccess: () => {
@@ -107,15 +107,15 @@ export const useLogout = () => {
   });
 };
 
-export const useCurrentUser = () => {
-  const setUser = useAuthStore((s) => s.setUser);
-  return useQuery({
-    queryKey: ["currentUser"],
-    queryFn: getCurrentUser,
-    onSuccess: (user) => {
-      setUser(user);
-    },
-    onError: () => setUser(null),
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  });
-};
+// export const useCurrentUser = () => {
+//   const setUser = useAuthStore((s) => s.setUser);
+//   return useQuery({
+//     queryKey: ["currentUser"],
+//     queryFn: getCurrentUser,
+//     onSuccess: (user) => {
+//       setUser(user);
+//     },
+//     onError: () => setUser(null),
+//     staleTime: 5 * 60 * 1000, // 5 minutes
+//   });
+// };

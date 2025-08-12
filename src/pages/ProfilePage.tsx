@@ -58,7 +58,9 @@ type FormData = yup.InferType<typeof schema>;
 export const ProfilePage: React.FC = () => {
 
   const [isEditing, setIsEditing] = useState(false);
+
   const { user, updateProfile } = useAuthStore();
+
   // const { workouts } = useWorkoutStore();
   // const { goals } = useGoalStore();
 

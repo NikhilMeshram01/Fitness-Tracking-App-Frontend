@@ -4,69 +4,50 @@ import { Goal } from "../types";
 
 interface GoalState {
   goals: Goal[];
-  addGoal: (goal: Omit<Goal, "id" | "createdAt">) => void;
-  updateGoal: (id: string, updates: Partial<Goal>) => void;
+  setGoals: (goals: Goal[]) => void;
+  addGoal: (goal: Goal) => void;
+  updateGoal: (id: string, updatedData: Partial<Goal>) => void;
   deleteGoal: (id: string) => void;
+  clearGoals: () => void;
   getActiveGoals: () => Goal[];
   getCompletedGoals: () => Goal[];
 }
 
-const mockGoals: Goal[] = [
-  {
-    id: "1",
-    userId: "1",
-    type: "weight_loss",
-    title: "Lose 5kg",
-    description: "Target weight loss by end of month",
-    targetValue: 70,
-    currentValue: 73,
-    unit: "kg",
-    targetDate: "2025-02-28",
-    isCompleted: false,
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: "2",
-    userId: "1",
-    type: "workout_frequency",
-    title: "Workout 4 times per week",
-    description: "Maintain consistent workout schedule",
-    targetValue: 4,
-    currentValue: 3,
-    unit: "workouts/week",
-    targetDate: "2025-12-31",
-    isCompleted: false,
-    createdAt: new Date().toISOString(),
-  },
-];
-
 export const useGoalStore = create<GoalState>()(
   persist(
     (set, get) => ({
-      goals: mockGoals,
-      addGoal: (goal) => {
-        const newGoal: Goal = {
-          ...goal,
-          id: Date.now().toString(),
-          createdAt: new Date().toISOString(),
-        };
-        set((state) => ({ goals: [...state.goals, newGoal] }));
+      goals: [],
+
+      setGoals: (goals) => {
+        set({ goals });
       },
-      updateGoal: (id, updates) => {
+
+      addGoal: (goal) => {
+        set((state) => ({ goals: [...state.goals, goal] }));
+      },
+
+      updateGoal: (id, updatedData) => {
         set((state) => ({
-          goals: state.goals.map((g) =>
-            g.id === id ? { ...g, ...updates } : g
+          goals: state.goals.map((goal) =>
+            goal._id === id ? { ...goal, ...updatedData } : goal
           ),
         }));
       },
+
       deleteGoal: (id) => {
         set((state) => ({
-          goals: state.goals.filter((g) => g.id !== id),
+          goals: state.goals.filter((goal) => goal._id !== id),
         }));
       },
+
+      clearGoals: () => {
+        set({ goals: [] });
+      },
+
       getActiveGoals: () => {
         return get().goals.filter((g) => !g.isCompleted);
       },
+
       getCompletedGoals: () => {
         return get().goals.filter((g) => g.isCompleted);
       },

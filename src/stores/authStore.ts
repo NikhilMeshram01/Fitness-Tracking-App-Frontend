@@ -21,6 +21,7 @@ export const useAuthStore = create<AuthState>()(
       },
 
       logout: () => {
+        console.log("logout hit from authStore.ts");
         set({ user: null, isAuthenticated: false });
       },
 

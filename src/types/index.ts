@@ -1,5 +1,5 @@
 export interface User {
-  id: string;
+  _id: string;
   email: string;
   firstName: string;
   lastName: string;
@@ -12,44 +12,48 @@ export interface User {
   createdAt: string;
 }
 export interface Workout {
-  id: string;
+  _id: string;
   userId: string;
-  type: "cardio" | "strength" | "yoga" | "flexibility" | "sports" | "other";
+  exerciseType:
+    | "cardio"
+    | "strength"
+    | "yoga"
+    | "flexibility"
+    | "sports"
+    | "other";
   name: string;
   duration: number; // in minutes
   caloriesBurned: number;
   exercises: Exercise[];
-  date: string;
+  workoutDate: string;
   notes?: string;
 }
-
-export interface Exercise {
-  id: string;
-  name: string;
-  sets?: number;
-  reps?: number;
-  weight?: number; // in kg
-  duration?: number; // in minutes
-  distance?: number; // in km
-}
-
 export interface Goal {
-  id: string;
+  _id: string;
   userId: string;
-  type:
+  goalType:
     | "weight_loss"
     | "weight_gain"
     | "workout_frequency"
     | "calories"
     | "distance";
   title: string;
-  description: string;
+  description?: string;
   targetValue: number;
   currentValue: number;
   unit: string;
   targetDate: string;
   isCompleted: boolean;
-  createdAt: string;
+}
+
+export interface Exercise {
+  _id: string;
+  name: string;
+  sets?: number;
+  reps?: number;
+  weight?: number; // in kg
+  duration?: number; // in minutes
+  distance?: number; // in km
 }
 
 export interface Progress {
@@ -71,14 +75,14 @@ export interface Achievement {
   isUnlocked: boolean;
 }
 
-export interface BlogPost {
-  id: string;
-  title: string;
-  excerpt: string;
-  content: string;
-  category: "fitness" | "nutrition" | "lifestyle";
-  author: string;
-  publishedAt: string;
-  imageUrl: string;
-  readTime: number;
-}
+// export interface BlogPost {
+//   id: string;
+//   title: string;
+//   excerpt: string;
+//   content: string;
+//   category: "fitness" | "nutrition" | "lifestyle";
+//   author: string;
+//   publishedAt: string;
+//   imageUrl: string;
+//   readTime: number;
+// }
