@@ -5,7 +5,7 @@ import { Workout } from "../types";
 interface WorkoutState {
   workouts: Workout[];
   setWorkouts: (workouts: Workout[]) => void;
-  addWorkout: (workout: Omit<Workout, "id">) => void;
+  addWorkout: (workout: Omit<Workout, "_id">) => void;
   updateWorkout: (id: string, updates: Partial<Workout>) => void;
   deleteWorkout: (id: string) => void;
   getWorkoutsByDate: (date: string) => Workout[];
@@ -26,6 +26,7 @@ export const useWorkoutStore = create<WorkoutState>()(
           ...workout,
           _id: Date.now().toString(),
         };
+        console.log("Adding workout:", newWorkout);
         set((state) => ({ workouts: [...state.workouts, newWorkout] }));
       },
 
@@ -39,7 +40,7 @@ export const useWorkoutStore = create<WorkoutState>()(
 
       deleteWorkout: (id) => {
         set((state) => ({
-          workouts: state.workouts.filter((w) => w.id !== id),
+          workouts: state.workouts.filter((w) => w._id !== id),
         }));
       },
 

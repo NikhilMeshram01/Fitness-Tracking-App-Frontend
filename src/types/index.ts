@@ -56,24 +56,24 @@ export interface Exercise {
   distance?: number; // in km
 }
 
-export interface Progress {
-  id: string;
-  userId: string;
-  date: string;
-  weight?: number;
-  bodyFat?: number;
-  muscleMass?: number;
-  measurements?: Record<string, number>;
-}
+// export interface Progress {
+//   id: string;
+//   userId: string;
+//   date: string;
+//   weight?: number;
+//   bodyFat?: number;
+//   muscleMass?: number;
+//   measurements?: Record<string, number>;
+// }
 
-export interface Achievement {
-  id: string;
-  title: string;
-  description: string;
-  icon: string;
-  unlockedAt?: string;
-  isUnlocked: boolean;
-}
+// export interface Achievement {
+//   id: string;
+//   title: string;
+//   description: string;
+//   icon: string;
+//   unlockedAt?: string;
+//   isUnlocked: boolean;
+// }
 
 // export interface BlogPost {
 //   id: string;

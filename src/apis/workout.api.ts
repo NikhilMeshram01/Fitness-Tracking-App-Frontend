@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Workout } from "../types";
-// import api from "./api";
+import api from "./api";
 
 const API_BASE = "api/v1/workouts";
 
@@ -9,7 +9,7 @@ export const createWorkout = async (
   newWorkout: Omit<Workout, "id">
 ): Promise<Workout> => {
   try {
-    const res = await axios.post(`${API_BASE}`, newWorkout, {
+    const res = await api.post(`${API_BASE}`, newWorkout, {
       withCredentials: true,
     });
     return res.data.workout as Workout;
@@ -21,21 +21,6 @@ export const createWorkout = async (
   }
 };
 
-// ✅ Get all workouts for a user
-// export const getWorkoutsByUser = async (userId: string): Promise<Workout[]> => {
-//   try {
-//     const res = await axios.get(`${API_BASE}`, {
-//       params: { userId },
-//       withCredentials: true,
-//     });
-
-//     return res.data.workouts as Workout[];
-//   } catch (error: any) {
-//     throw new Error(
-//       error.response?.data?.message || "Failed to fetch workouts"
-//     );
-//   }
-// };
 export const getWorkoutsByUser = async (
   userId: string,
   sortBy: string,
@@ -49,7 +34,7 @@ export const getWorkoutsByUser = async (
 }> => {
   try {
     console.log("sortBy  ----->", sortBy);
-    const res = await axios.get(`${API_BASE}`, {
+    const res = await api.get(`${API_BASE}`, {
       params: { userId, page, limit, sortBy },
       withCredentials: true,
     });
@@ -70,7 +55,7 @@ export const getWorkoutsByUser = async (
 // ✅ Get a single workout by ID
 export const getWorkoutById = async (id: string): Promise<Workout | null> => {
   try {
-    const res = await axios.get(`${API_BASE}/${id}`, {
+    const res = await api.get(`${API_BASE}/${id}`, {
       withCredentials: true,
     });
     return res.data.workout as Workout;
@@ -85,7 +70,7 @@ export const updateWorkout = async (
   updatedData: Partial<Workout>
 ): Promise<Workout> => {
   try {
-    const res = await axios.put(`${API_BASE}/${id}`, updatedData, {
+    const res = await api.put(`${API_BASE}/${id}`, updatedData, {
       withCredentials: true,
     });
     return res.data.workout as Workout;
@@ -99,7 +84,7 @@ export const updateWorkout = async (
 // ✅ Delete a workout
 export const deleteWorkout = async (id: string): Promise<void> => {
   try {
-    await axios.delete(`${API_BASE}/${id}`, {
+    await api.delete(`${API_BASE}/${id}`, {
       withCredentials: true,
     });
   } catch (error: any) {

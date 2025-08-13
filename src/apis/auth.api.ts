@@ -1,14 +1,14 @@
 import axios from "axios";
 import { User } from "../types";
+import api from "./api";
 
 const API_BASE = "api/v1/users";
 
 export const registerUser = async (
   userData: Omit<User, "id" | "createdAt">
 ): Promise<User> => {
-  // console.log("registerUser inside auth.api.ts hit", userData);
   try {
-    const res = await axios.post(`${API_BASE}/register`, userData, {
+    const res = await api.post(`${API_BASE}/register`, userData, {
       withCredentials: true,
     });
     if (!res.data?.user) {
@@ -27,7 +27,7 @@ export const loginUser = async (
   try {
     console.log(`api ----> ${API_BASE}/login`);
     console.log("auth.api.ts-->", email, password);
-    const res = await axios.post(
+    const res = await api.post(
       `${API_BASE}/login`,
       { email, password },
       { withCredentials: true }
@@ -43,14 +43,14 @@ export const loginUser = async (
 
 export const logoutUser = async (): Promise<void> => {
   console.log("logout hit from auth.api.ts");
-  await axios.post(`${API_BASE}/logout`, {}, { withCredentials: true });
+  await api.post(`${API_BASE}/logout`, {}, { withCredentials: true });
 };
 
 export const updateUserProfile = async (
   updatedData: Partial<Omit<User, "id" | "createdAt" | "email" | "password">>
 ): Promise<User> => {
   try {
-    const res = await axios.patch(`${API_BASE}/update`, updatedData, {
+    const res = await api.patch(`${API_BASE}/update`, updatedData, {
       withCredentials: true,
     });
     console.log("res.data?.user -->", res.data.user);
@@ -69,7 +69,7 @@ export const updateUserProfile = async (
 
 // export const getCurrentUser = async (): Promise<User> => {
 //   try {
-//     const res = await axios.get(`${API_BASE}/profile`, {
+//     const res = await api.get(`${API_BASE}/profile`, {
 //       withCredentials: true,
 //     });
 //     if (!res.data?.user) {

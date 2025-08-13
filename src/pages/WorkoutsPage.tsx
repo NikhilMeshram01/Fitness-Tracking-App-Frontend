@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useWorkout, useWorkouts, useCreateWorkout, useUpdateWorkout, useDeleteWorkout } from '../hooks/useWorkout';
 import { useAuthStore } from '../stores/authStore';
+import { useWorkoutStore } from '../stores/workoutStore';
 import { Workout } from '../types';
 import toast from 'react-hot-toast';
 
@@ -285,6 +286,8 @@ const WorkoutForm: React.FC<{
 export const WorkoutsPage: React.FC = () => {
   const navigate = useNavigate();
 
+  const { addWorkout, } = useWorkoutStore()
+
   const { user, isAuthenticated } = useAuthStore();
 
   const createWorkoutMutation = useCreateWorkout();
@@ -414,7 +417,7 @@ export const WorkoutsPage: React.FC = () => {
         <h3 className="text-xl font-semibold text-gray-600 mb-2">Error loading workouts</h3>
         <p className="text-gray-500 mb-6">{error?.message || 'An error occurred'}</p>
         <button
-          onClick={() => navigate(0)} // Refresh the page to retry
+          onClick={() => navigate(0)} // Refresh the current page to retry
           className="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all"
         >
           Retry

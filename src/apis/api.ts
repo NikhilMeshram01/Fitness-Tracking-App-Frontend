@@ -1,29 +1,54 @@
-// import axios from "axios";
-// import Cookies from "js-cookie";
+import axios from "axios";
 
-// // Create an Axios instance
-// const api = axios.create({
-//   baseURL: "http://localhost:5000", // Your backend URL
-// });
+// Create Axios instance
+const api = axios.create({
+  baseURL: "http://localhost:5000", // 👈 change to your backend URL
+  withCredentials: true, // 👈 important: includes cookies
+});
 
-// // Add a request interceptor to attach the Bearer token
-// api.interceptors.request.use(
-//   (config) => {
-//     // Extract token from cookie (based on your console log: cookie: 'token=<JWT>')
-//     const token = Cookies.get("token");
-//     console.log("api.ts -->", token);
-//     if (token) {
-//       config.headers.Authorization = `Bearer ${token}`;
-//       console.log("Added Authorization header:", `Bearer ${token}`);
-//     } else {
-//       console.warn("No token found in cookies");
-//     }
-//     return config;
-//   },
-//   (error) => {
-//     console.error("Interceptor error:", error);
-//     return Promise.reject(error);
-//   }
-// );
+const API_BASE = "api/v1/users";
 
-// export default api;
+const forceLogout = async () => {
+  try {
+    await api.post(`${API_BASE}/logout`);
+  } catch (error) {
+    console.error("Logout error:", error);
+  } finally {
+    window.location.href = "/login";
+  }
+};
+
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (
+      error.response?.status === 403 &&
+      !originalRequest._retry &&
+      !originalRequest.url.includes("/refresh-token")
+    ) {
+      originalRequest._retry = true;
+
+      try {
+        console.log("attempt to refresh the token");
+        // Attempt to refresh the token
+        await api.post(`${API_BASE}/refresh-token`);
+
+        // Retry the original request
+        return api(originalRequest);
+      } catch (refreshError) {
+        console.error("Token refresh failed:", refreshError);
+
+        await forceLogout();
+
+        // Optionally: redirect to login or show message
+        return Promise.reject(refreshError);
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
+
+export default api;

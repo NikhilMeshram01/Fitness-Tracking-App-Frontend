@@ -1,12 +1,13 @@
 import axios from "axios";
 import { Goal } from "../types";
+import api from "./api";
 
 const API_BASE = "api/v1/goals";
 
 export const createGoal = async (newGoal: Omit<Goal, "_id">): Promise<Goal> => {
   try {
     console.log("create goal api hit from goal.api.ts", newGoal);
-    const res = await axios.post(API_BASE, newGoal, {
+    const res = await api.post(API_BASE, newGoal, {
       withCredentials: true,
     });
     return res.data.goal as Goal;
@@ -18,7 +19,7 @@ export const createGoal = async (newGoal: Omit<Goal, "_id">): Promise<Goal> => {
 
 export const getGoalsByUser = async (userId: string): Promise<Goal[]> => {
   try {
-    const res = await axios.get(API_BASE, {
+    const res = await api.get(API_BASE, {
       params: { userId },
       withCredentials: true,
     });
@@ -30,7 +31,7 @@ export const getGoalsByUser = async (userId: string): Promise<Goal[]> => {
 
 export const getGoalById = async (id: string): Promise<Goal> => {
   try {
-    const res = await axios.get(`${API_BASE}/${id}`, {
+    const res = await api.get(`${API_BASE}/${id}`, {
       withCredentials: true,
     });
     return res.data.goal as Goal;
@@ -45,7 +46,7 @@ export const updateGoal = async (
 ): Promise<Goal> => {
   console.log("hit here");
   try {
-    const res = await axios.put(`${API_BASE}/${id}`, updatedData, {
+    const res = await api.put(`${API_BASE}/${id}`, updatedData, {
       withCredentials: true,
     });
     return res.data.goal as Goal;
@@ -56,7 +57,7 @@ export const updateGoal = async (
 
 export const deleteGoal = async (id: string): Promise<void> => {
   try {
-    await axios.delete(`${API_BASE}/${id}`, {
+    await api.delete(`${API_BASE}/${id}`, {
       withCredentials: true,
     });
   } catch (error: any) {

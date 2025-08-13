@@ -55,7 +55,7 @@ export const Dashboard: React.FC = () => {
   });
 
   const totalCaloriesBurned = workouts.reduce((sum, w) => sum + w.caloriesBurned, 0);
-  const averageWorkoutDuration = workouts.length > 0 
+  const averageWorkoutDuration = workouts.length > 0
     ? Math.round(workouts.reduce((sum, w) => sum + w.duration, 0) / workouts.length)
     : 0;
 
@@ -95,11 +95,11 @@ export const Dashboard: React.FC = () => {
           Welcome back, {user?.firstName}! 👋
         </h1>
         <p className="text-gray-600">
-          Here's your fitness overview for today, {new Date().toLocaleDateString('en-US', { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
+          Here's your fitness overview for today, {new Date().toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
           })}.
         </p>
       </motion.div>
@@ -246,7 +246,7 @@ export const Dashboard: React.FC = () => {
                 activeGoals.slice(0, 2).map((goal) => {
                   const progress = (goal.currentValue / goal.targetValue) * 100;
                   return (
-                    <div key={goal.id} className="p-3 bg-gray-50 rounded-lg">
+                    <div key={goal._id} className="p-3 bg-gray-50 rounded-lg">
                       <div className="font-medium text-gray-900 mb-2">{goal.title}</div>
                       <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
                         <span>{goal.currentValue} / {goal.targetValue} {goal.unit}</span>
