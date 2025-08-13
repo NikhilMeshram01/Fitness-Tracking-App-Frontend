@@ -46,6 +46,27 @@ export const logoutUser = async (): Promise<void> => {
   await axios.post(`${API_BASE}/logout`, {}, { withCredentials: true });
 };
 
+export const updateUserProfile = async (
+  updatedData: Partial<Omit<User, "id" | "createdAt" | "email" | "password">>
+): Promise<User> => {
+  try {
+    const res = await axios.patch(`${API_BASE}/update`, updatedData, {
+      withCredentials: true,
+    });
+    console.log("res.data?.user -->", res.data.user);
+    if (!res.data?.user) {
+      throw new Error("Invalid response from server");
+    }
+
+    return res.data.user as User;
+  } catch (error: any) {
+    console.log(error.message);
+    throw new Error(
+      error.response?.data?.message || "Failed to update profile"
+    );
+  }
+};
+
 // export const getCurrentUser = async (): Promise<User> => {
 //   try {
 //     const res = await axios.get(`${API_BASE}/profile`, {

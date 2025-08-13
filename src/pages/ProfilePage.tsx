@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '../stores/authStore';
+import { useUpdateProfile } from '../hooks/useAuth';
 // import { useWorkoutStore } from '../stores/workoutStore';
 // import { useGoalStore } from '../stores/goalStore';
 
@@ -61,6 +62,9 @@ export const ProfilePage: React.FC = () => {
 
   const { user, updateProfile } = useAuthStore();
 
+  const { mutateAsync: updateUserProfile } = useUpdateProfile(); // Use useRegister hook
+
+
   // const { workouts } = useWorkoutStore();
   // const { goals } = useGoalStore();
 
@@ -85,9 +89,12 @@ export const ProfilePage: React.FC = () => {
 
   const onSubmit = async (data: FormData) => {
     try {
-      updateProfile(data);
-      toast.success('Profile updated successfully!');
-      setIsEditing(false);
+      // updateProfile(data);
+      const success = await updateUserProfile(data)
+      if (success) {
+        toast.success('Profile updated successfully!');
+        setIsEditing(false);
+      }
     } catch (error) {
       toast.error('Failed to update profile');
     }

@@ -43,6 +43,7 @@ export const updateGoal = async (
   id: string,
   updatedData: Partial<Goal>
 ): Promise<Goal> => {
+  console.log("hit here");
   try {
     const res = await axios.put(`${API_BASE}/${id}`, updatedData, {
       withCredentials: true,

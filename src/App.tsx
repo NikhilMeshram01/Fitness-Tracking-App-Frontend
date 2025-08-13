@@ -17,13 +17,13 @@ import { WorkoutsPage } from "./pages/WorkoutsPage";
 import { GoalsPage } from "./pages/GoalsPage";
 import { ProgressPage } from "./pages/ProgressPage";
 import { ProfilePage } from "./pages/ProfilePage";
-import { BlogPage } from "./pages/BlogPage";
-import { BlogPostPage } from "./pages/BlogPostPage";
+// import { BlogPage } from "./pages/BlogPage";
+// import { BlogPostPage } from "./pages/BlogPostPage";
 import { useAuthStore } from "./stores/authStore";
 
 const queryClient = new QueryClient({
-  defaultOptions:{
-    queries:{
+  defaultOptions: {
+    queries: {
       refetchOnWindowFocus: false,
       retry: 1, // retry once on failure
     }
@@ -68,8 +68,8 @@ function App() {
               <Route path="goals" element={<GoalsPage />} />
               <Route path="progress" element={<ProgressPage />} />
               <Route path="profile" element={<ProfilePage />} />
-              <Route path="blog" element={<BlogPage />} />
-              <Route path="blog/:id" element={<BlogPostPage />} />
+              {/* <Route path="blog" element={<BlogPage />} /> */}
+              {/* <Route path="blog/:id" element={<BlogPostPage />} /> */}
             </Route>
 
             {/* Catch all route */}

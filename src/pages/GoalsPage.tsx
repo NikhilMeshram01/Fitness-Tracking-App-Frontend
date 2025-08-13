@@ -344,6 +344,7 @@ const GoalForm: React.FC<{
 };
 
 export const GoalsPage: React.FC = () => {
+
   const { goals, setGoals, addGoal, updateGoal, deleteGoal } = useGoalStore();
 
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -358,6 +359,9 @@ export const GoalsPage: React.FC = () => {
   const createGoalMutation = useCreateGoal();
   const updateGoalMutation = useUpdateGoal();
   const deleteGoalMutation = useDeleteGoal();
+
+  // const updateGoalMutation = useUpdateGoal();
+  // const { goals, updateGoal } = useGoalStore();
 
   // Sync store with fetched goals
   useEffect(() => {
@@ -430,6 +434,8 @@ export const GoalsPage: React.FC = () => {
 
   const handleToggleComplete = (id: string) => {
     const goal = goals.find((g) => g._id === id);
+    if (!goal) console.log('no goal found')
+    console.log('goal', goal)
     if (goal) {
       updateGoalMutation.mutate(
         { id, updatedData: { isCompleted: !goal.isCompleted } },
@@ -437,6 +443,10 @@ export const GoalsPage: React.FC = () => {
           onSuccess: (updatedGoal) => {
             updateGoal(id, updatedGoal);
             setError(null);
+          },
+          onError: (err) => {
+            console.error("Failed to update goal:", err);
+            setError("Failed to update goal.");
           },
         }
       );

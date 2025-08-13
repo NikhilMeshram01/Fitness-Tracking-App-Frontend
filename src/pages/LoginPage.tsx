@@ -16,10 +16,13 @@ const schema = yup.object({
 type FormData = yup.InferType<typeof schema>;
 
 export const LoginPage: React.FC = () => {
+
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [loginError, setloginError] = useState("")
 
   const { mutateAsync: loginUser } = useLogin(); // Use useRegister hook
 
@@ -44,8 +47,9 @@ export const LoginPage: React.FC = () => {
       } else {
         toast.error('Invalid credentials');
       }
-    } catch (error) {
-      toast.error('Something went wrong');
+    } catch (error: any) {
+      toast.error(error.message);
+      setloginError(error.message)
     } finally {
       setIsLoading(false);
     }
@@ -133,6 +137,9 @@ export const LoginPage: React.FC = () => {
             >
               {isLoading ? 'Signing In...' : 'Sign In'}
             </motion.button>
+            {loginError && (
+              <p className="text-red-500 text-lg text-center mt-[-24px]]">{loginError}</p>
+            )}
           </form>
 
           <div className="mt-8 text-center">

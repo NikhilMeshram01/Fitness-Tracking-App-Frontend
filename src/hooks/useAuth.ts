@@ -60,6 +60,7 @@ import {
   loginUser,
   registerUser,
   logoutUser,
+  updateUserProfile,
   // getCurrentUser,
 } from "../apis/auth.api";
 import { useAuthStore } from "../stores/authStore";
@@ -90,6 +91,26 @@ export const useRegister = () => {
     },
     onError: (error: any) => {
       console.error("Registration error:", error.message);
+    },
+  });
+};
+
+export const useUpdateProfile = () => {
+  const setUser = useAuthStore((s) => s.setUser);
+
+  return useMutation({
+    mutationFn: (
+      data: Partial<Omit<User, "id" | "createdAt" | "email" | "password">>
+    ) => {
+      console.log("mutationFn called in useUpdateProfile", data);
+      return updateUserProfile(data);
+    },
+    onSuccess: (user) => {
+      console.log("User profile updated successfully");
+      setUser(user); // Update the user in global auth store
+    },
+    onError: (error: any) => {
+      console.error("Update profile error:", error.message);
     },
   });
 };

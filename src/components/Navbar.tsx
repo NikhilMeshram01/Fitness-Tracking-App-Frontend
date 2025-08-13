@@ -8,7 +8,7 @@ import {
   Target,
   TrendingUp,
   User,
-  BookOpen,
+  // BookOpen,
   Menu,
   X,
   LogOut
@@ -22,7 +22,7 @@ const navItems = [
   { to: '/goals', icon: Target, label: 'Goals' },
   { to: '/progress', icon: TrendingUp, label: 'Progress' },
   { to: '/profile', icon: User, label: 'Profile' },
-  { to: '/blog', icon: BookOpen, label: 'Blog' },
+  // { to: '/blog', icon: BookOpen, label: 'Blog' },
 ];
 
 export const Navbar: React.FC = () => {

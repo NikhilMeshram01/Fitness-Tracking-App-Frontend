@@ -8,22 +8,6 @@ import {
 } from "../apis/goal.api";
 import { Goal } from "../types";
 
-export const useGoals = (userId: string) => {
-  return useQuery({
-    queryKey: ["goals", userId],
-    queryFn: () => getGoalsByUser(userId),
-    enabled: !!userId,
-  });
-};
-
-export const useGoal = (id: string) => {
-  return useQuery({
-    queryKey: ["goal", id],
-    queryFn: () => getGoalById(id),
-    enabled: !!id,
-  });
-};
-
 export const useCreateGoal = () => {
   const queryClient = useQueryClient();
 
@@ -37,9 +21,29 @@ export const useCreateGoal = () => {
   });
 };
 
+export const useGoals = (userId: string) => {
+  return useQuery({
+    queryKey: ["goals", userId],
+    queryFn: () => getGoalsByUser(userId),
+    enabled: !!userId,
+  });
+};
+
+// export const useMarkCompleted =(userId:string)=>{
+
+// }
+
+export const useGoal = (id: string) => {
+  return useQuery({
+    queryKey: ["goal", id],
+    queryFn: () => getGoalById(id),
+    enabled: !!id,
+  });
+};
+
 export const useUpdateGoal = () => {
   const queryClient = useQueryClient();
-
+  console.log("hit");
   return useMutation({
     mutationFn: ({
       id,
