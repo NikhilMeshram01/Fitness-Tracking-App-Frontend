@@ -22,14 +22,44 @@ export const createWorkout = async (
 };
 
 // ✅ Get all workouts for a user
-export const getWorkoutsByUser = async (userId: string): Promise<Workout[]> => {
+// export const getWorkoutsByUser = async (userId: string): Promise<Workout[]> => {
+//   try {
+//     const res = await axios.get(`${API_BASE}`, {
+//       params: { userId },
+//       withCredentials: true,
+//     });
+
+//     return res.data.workouts as Workout[];
+//   } catch (error: any) {
+//     throw new Error(
+//       error.response?.data?.message || "Failed to fetch workouts"
+//     );
+//   }
+// };
+export const getWorkoutsByUser = async (
+  userId: string,
+  sortBy: string,
+  page: number = 1,
+  limit: number = 10
+): Promise<{
+  workouts: Workout[];
+  page: number;
+  totalPages: number;
+  total: number;
+}> => {
   try {
+    console.log("sortBy  ----->", sortBy);
     const res = await axios.get(`${API_BASE}`, {
-      params: { userId },
+      params: { userId, page, limit, sortBy },
       withCredentials: true,
     });
 
-    return res.data.workouts as Workout[];
+    return {
+      workouts: res.data.workouts,
+      page: res.data.page,
+      totalPages: res.data.totalPages,
+      total: res.data.total,
+    };
   } catch (error: any) {
     throw new Error(
       error.response?.data?.message || "Failed to fetch workouts"

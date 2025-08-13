@@ -287,17 +287,29 @@ export const WorkoutsPage: React.FC = () => {
 
   const { user, isAuthenticated } = useAuthStore();
 
-  const { data: workouts = [], isLoading, isError, error } = useWorkouts(user?._id || '');
-  console.log('--->>', workouts)
   const createWorkoutMutation = useCreateWorkout();
   const updateWorkoutMutation = useUpdateWorkout();
   const deleteWorkoutMutation = useDeleteWorkout();
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 9; // adjust as needed
+
 
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingWorkout, setEditingWorkout] = useState<Workout | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'date' | 'duration' | 'calories'>('date');
+
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+  } = useWorkouts(user._id, currentPage, ITEMS_PER_PAGE, sortBy);
+
+  const workouts = data?.workouts ?? [];
+  const totalPages = data?.totalPages ?? 1;
 
   // Redirect to login if not authenticated
   if (!isAuthenticated || !user) {
@@ -322,6 +334,7 @@ export const WorkoutsPage: React.FC = () => {
           return 0;
       }
     });
+  console.log(filteredWorkouts)
 
   const handleFormSubmit = (data: WorkoutFormData) => {
     if (editingWorkout) {
@@ -542,6 +555,36 @@ export const WorkoutsPage: React.FC = () => {
           ))}
         </AnimatePresence>
       </div>
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center mt-8 space-x-2 w-full">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className={`px-4 py-2 rounded-xl ${currentPage === 1
+              ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+              : "bg-blue-600 text-white hover:bg-blue-700"
+              }`}
+          >
+            Previous
+          </button>
+
+          <span className="px-4 py-2 text-gray-700">
+            Page {currentPage} of {totalPages}
+          </span>
+
+          <button
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className={`px-4 py-2 rounded-xl ${currentPage === totalPages
+              ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+              : "bg-blue-600 text-white hover:bg-blue-700"
+              }`}
+          >
+            Next
+          </button>
+        </div>
+      )}
 
       {filteredWorkouts.length === 0 && (
         <div className="text-center py-16">

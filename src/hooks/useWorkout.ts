@@ -8,12 +8,33 @@ import {
 } from "../apis/workout.api";
 import { Workout } from "../types";
 
-// 🔁 Get all workouts for a user
-export const useWorkouts = (userId: string) => {
-  return useQuery({
-    queryKey: ["workouts", userId],
-    queryFn: () => getWorkoutsByUser(userId),
-    enabled: !!userId, // only fetch if userId exists
+interface PaginatedWorkoutResponse {
+  workouts: Workout[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
+export const useWorkouts = (
+  userId: string,
+  currentPage: number,
+  ITEMS_PER_PAGE: number,
+  sortBy: string
+) => {
+  return useQuery<PaginatedWorkoutResponse, Error>({
+    queryKey: ["workouts", userId, currentPage, ITEMS_PER_PAGE, sortBy],
+    queryFn: async () => {
+      const res = await fetch(
+        `/api/v1/workouts?page=${currentPage}&limit=${ITEMS_PER_PAGE}&sortBy=${sortBy}`,
+        {
+          credentials: "include",
+        }
+      );
+      if (!res.ok) throw new Error("Failed to fetch workouts");
+      return res.json(); // should return { workouts, total, page, totalPages }
+    },
+    enabled: !!userId,
+    // keepPreviousData: true, // ⬅️ Keeps previous page's data while loading new one
   });
 };
 
