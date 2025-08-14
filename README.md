@@ -41,7 +41,8 @@
 
 3. Start the Development Server:
 
-```npm run dev
+```
+npm run dev
 
 ```
 
