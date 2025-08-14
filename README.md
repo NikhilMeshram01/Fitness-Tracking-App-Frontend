@@ -32,16 +32,17 @@
    git clone https://github.com/NikhilMeshram01/Fitness-Tracking-App-Frontend.git
    cd Fitness-Tracking-App-Frontend
    ```
-2. Install Dependencies: ```npm install
+2. Install Dependencies:
 
-   ```
+```
+   npm install
 
-   ```
+```
 
-3. Start the Development Server:```npm run dev
+3. Start the Development Server:
 
-   ```
+```npm run dev
 
-   ```
+```
 
 4. Open your browser and go to: http://localhost:5173
