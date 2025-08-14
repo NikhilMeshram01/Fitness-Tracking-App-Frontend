@@ -44,20 +44,19 @@ export const Dashboard: React.FC = () => {
   const { workouts, getRecentWorkouts } = useWorkoutStore();
   const { goals, getActiveGoals } = useGoalStore();
 
-  const recentWorkouts = getRecentWorkouts(3);
+  const recentWorkouts = getRecentWorkouts(5);
   const activeGoals = getActiveGoals();
 
   const thisWeekWorkouts = workouts.filter(w => {
-    const workoutDate = new Date(w.date);
+    const workoutDate = new Date(w.workoutDate);
     const now = new Date();
     const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
     return workoutDate >= weekAgo && workoutDate <= now;
   });
 
-  const totalCaloriesBurned = workouts.reduce((sum, w) => sum + w.caloriesBurned, 0);
-  const averageWorkoutDuration = workouts.length > 0
-    ? Math.round(workouts.reduce((sum, w) => sum + w.duration, 0) / workouts.length)
-    : 0;
+  const {
+    totalCaloriesBurned, averageDuration
+  } = useWorkoutStore();
 
   const quickActions = [
     {
@@ -129,7 +128,7 @@ export const Dashboard: React.FC = () => {
         />
         <StatCard
           title="Avg Duration"
-          value={`${averageWorkoutDuration}m`}
+          value={`${(averageDuration).toFixed(2)}m`}
           subtitle="per workout session"
           icon={<Clock className="h-6 w-6" />}
           color="from-purple-500 to-purple-600"
@@ -157,11 +156,12 @@ export const Dashboard: React.FC = () => {
                 View all <ArrowRight className="h-4 w-4 ml-1" />
               </Link>
             </div>
+
             <div className="space-y-4">
               {recentWorkouts.length > 0 ? (
                 recentWorkouts.map((workout) => (
                   <div
-                    key={workout.id}
+                    key={workout._id}
                     className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
                   >
                     <div className="flex items-center space-x-4">
@@ -171,13 +171,13 @@ export const Dashboard: React.FC = () => {
                       <div>
                         <div className="font-medium text-gray-900">{workout.name}</div>
                         <div className="text-sm text-gray-500">
-                          {workout.type.charAt(0).toUpperCase() + workout.type.slice(1)} • {workout.duration}min
+                          {workout.exerciseType.charAt(0).toUpperCase() + workout.exerciseType.slice(1)} • {workout.duration}min
                         </div>
                       </div>
                     </div>
                     <div className="text-right">
                       <div className="font-semibold text-gray-900">{workout.caloriesBurned} cal</div>
-                      <div className="text-sm text-gray-500">{workout.date}</div>
+                      <div className="text-sm text-gray-500">{new Intl.DateTimeFormat('en-US').format(new Date(workout.workoutDate))}</div>
                     </div>
                   </div>
                 ))
@@ -228,7 +228,7 @@ export const Dashboard: React.FC = () => {
           </div>
 
           {/* Active Goals */}
-          <div className="bg-white rounded-2xl shadow-lg p-6">
+          {/* <div className="bg-white rounded-2xl shadow-lg p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold text-gray-900 flex items-center">
                 <Target className="h-5 w-5 mr-2 text-green-600" />
@@ -268,7 +268,7 @@ export const Dashboard: React.FC = () => {
                 </div>
               )}
             </div>
-          </div>
+          </div> */}
 
           {/* Motivational Quote */}
           <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 text-white">

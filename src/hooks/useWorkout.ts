@@ -5,6 +5,8 @@ import {
   createWorkout,
   updateWorkout,
   deleteWorkout,
+  // last30days,
+  last30daysWorkoutByUser,
 } from "../apis/workout.api";
 import { Workout } from "../types";
 
@@ -12,7 +14,12 @@ interface PaginatedWorkoutResponse {
   workouts: Workout[];
   total: number;
   page: number;
+  totalWorkouts: number;
+  totalCaloriesBurned: number;
+  totalDuration: number;
   totalPages: number;
+  currentPage: number;
+  averageDuration: number;
 }
 
 export const useWorkouts = (
@@ -23,16 +30,17 @@ export const useWorkouts = (
 ) => {
   return useQuery<PaginatedWorkoutResponse, Error>({
     queryKey: ["workouts", userId, currentPage, ITEMS_PER_PAGE, sortBy],
-    queryFn: async () => {
-      const res = await fetch(
-        `/api/v1/workouts?page=${currentPage}&limit=${ITEMS_PER_PAGE}&sortBy=${sortBy}`,
-        {
-          credentials: "include",
-        }
-      );
-      if (!res.ok) throw new Error("Failed to fetch workouts");
-      return res.json(); // should return { workouts, total, page, totalPages }
-    },
+    queryFn: () =>
+      getWorkoutsByUser(userId, sortBy, currentPage, ITEMS_PER_PAGE),
+    enabled: !!userId,
+    // keepPreviousData: true, // ⬅️ Keeps previous page's data while loading new one
+  });
+};
+
+export const useLast30DaysWorkouts = (userId: string) => {
+  return useQuery({
+    queryKey: ["workouts", userId],
+    queryFn: () => last30daysWorkoutByUser(userId),
     enabled: !!userId,
     // keepPreviousData: true, // ⬅️ Keeps previous page's data while loading new one
   });

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   TrendingUp,
@@ -27,7 +27,8 @@ import { Line, Bar } from 'react-chartjs-2';
 import { useWorkoutStore } from '../stores/workoutStore';
 import { useGoalStore } from '../stores/goalStore';
 import { useAuthStore } from '../stores/authStore';
-import { achievements } from '../data/mockData';
+// import { achievements } from '../data/mockData';
+import { useLast30DaysWorkouts } from '../hooks/useWorkout';
 
 ChartJS.register(
   CategoryScale,
@@ -71,47 +72,48 @@ const StatCard: React.FC<{
   </motion.div>
 );
 
-const AchievementCard: React.FC<{
-  achievement: typeof achievements[0];
-}> = ({ achievement }) => (
-  <motion.div
-    initial={{ opacity: 0, scale: 0.9 }}
-    animate={{ opacity: 1, scale: 1 }}
-    className={`p-4 rounded-2xl border-2 transition-all ${
-      achievement.isUnlocked
-        ? 'bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-300 shadow-lg'
-        : 'bg-gray-50 border-gray-200'
-    }`}
-  >
-    <div className="text-center">
-      <div className={`text-4xl mb-2 ${achievement.isUnlocked ? 'grayscale-0' : 'grayscale'}`}>
-        {achievement.icon}
-      </div>
-      <h3 className={`font-bold mb-1 ${achievement.isUnlocked ? 'text-gray-900' : 'text-gray-400'}`}>
-        {achievement.title}
-      </h3>
-      <p className={`text-sm ${achievement.isUnlocked ? 'text-gray-600' : 'text-gray-400'}`}>
-        {achievement.description}
-      </p>
-      {achievement.isUnlocked && achievement.unlockedAt && (
-        <p className="text-xs text-gray-500 mt-2">
-          Unlocked on {new Date(achievement.unlockedAt).toLocaleDateString()}
-        </p>
-      )}
-    </div>
-  </motion.div>
-);
+// const AchievementCard: React.FC<{
+//   achievement: typeof achievements[0];
+// }> = ({ achievement }) => (
+//   <motion.div
+//     initial={{ opacity: 0, scale: 0.9 }}
+//     animate={{ opacity: 1, scale: 1 }}
+//     className={`p-4 rounded-2xl border-2 transition-all ${achievement.isUnlocked
+//       ? 'bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-300 shadow-lg'
+//       : 'bg-gray-50 border-gray-200'
+//       }`}
+//   >
+//     <div className="text-center">
+//       <div className={`text-4xl mb-2 ${achievement.isUnlocked ? 'grayscale-0' : 'grayscale'}`}>
+//         {achievement.icon}
+//       </div>
+//       <h3 className={`font-bold mb-1 ${achievement.isUnlocked ? 'text-gray-900' : 'text-gray-400'}`}>
+//         {achievement.title}
+//       </h3>
+//       <p className={`text-sm ${achievement.isUnlocked ? 'text-gray-600' : 'text-gray-400'}`}>
+//         {achievement.description}
+//       </p>
+//       {achievement.isUnlocked && achievement.unlockedAt && (
+//         <p className="text-xs text-gray-500 mt-2">
+//           Unlocked on {new Date(achievement.unlockedAt).toLocaleDateString()}
+//         </p>
+//       )}
+//     </div>
+//   </motion.div>
+// );
 
 export const ProgressPage: React.FC = () => {
-  const { workouts } = useWorkoutStore();
+
+  const { workouts, totalWorkouts, totalCaloriesBurned: totalCalories, totalDuration,
+    last30Days, setLast30Days
+  } = useWorkoutStore();
+
+
+
   const { goals } = useGoalStore();
   const { user } = useAuthStore();
-  const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month' | 'year'>('month');
+  // const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month' | 'year'>('month');
 
-  // Calculate statistics
-  const totalWorkouts = workouts.length;
-  const totalCalories = workouts.reduce((sum, w) => sum + w.caloriesBurned, 0);
-  const totalDuration = workouts.reduce((sum, w) => sum + w.duration, 0);
   const completedGoals = goals.filter(g => g.isCompleted).length;
 
   // Calculate current weight (mock data - would come from progress entries)
@@ -122,13 +124,13 @@ export const ProgressPage: React.FC = () => {
   // Calculate streaks
   const today = new Date();
   let currentStreak = 0;
-  const sortedWorkouts = [...workouts].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  
+  const sortedWorkouts = [...last30Days].sort((a, b) => new Date(b.workoutDate).getTime() - new Date(a.workoutDate).getTime());
+
   for (let i = 0; i < 30; i++) {
     const checkDate = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
     const dateString = checkDate.toISOString().split('T')[0];
-    const hasWorkout = sortedWorkouts.some(w => w.date === dateString);
-    
+    const hasWorkout = sortedWorkouts.some(w => w.workoutDate === dateString);
+
     if (hasWorkout) {
       currentStreak++;
     } else if (i > 0) { // Don't break streak if today has no workout
@@ -136,19 +138,38 @@ export const ProgressPage: React.FC = () => {
     }
   }
 
+  console.log('currentStreak', currentStreak)
+
+  const { data, isLoading, error: queryError } = useLast30DaysWorkouts(`${user?._id}`);
+  console.log(data, isLoading, queryError)
+  useEffect(() => {
+    if (data?.workouts) {
+      setLast30Days(data.workouts);
+    }
+  }, [data, setLast30Days]);
+  console.log("last30Days", last30Days)
+
   // Prepare chart data
-  const last30Days = Array.from({ length: 30 }, (_, i) => {
+  const last30Dates = Array.from({ length: 30 }, (_, i) => {
     const date = new Date(today.getTime() - (29 - i) * 24 * 60 * 60 * 1000);
     return date.toISOString().split('T')[0];
   });
 
   const workoutData = {
-    labels: last30Days.map(date => new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })),
+    labels: last30Dates.map(date =>
+      new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    ),
     datasets: [
       {
         label: 'Daily Calories',
-        data: last30Days.map(date => {
-          const dayWorkouts = workouts.filter(w => w.date === date);
+        data: last30Dates.map(date => {
+          const targetDate = new Date(date).toISOString().split('T')[0];
+
+          const dayWorkouts = last30Days.filter(w => {
+            const workoutDate = new Date(w.workoutDate).toISOString().split('T')[0];
+            return workoutDate === targetDate;
+          });
+
           return dayWorkouts.reduce((sum, w) => sum + w.caloriesBurned, 0);
         }),
         borderColor: 'rgb(59, 130, 246)',
@@ -165,12 +186,12 @@ export const ProgressPage: React.FC = () => {
       {
         label: 'Workouts by Type',
         data: [
-          workouts.filter(w => w.type === 'cardio').length,
-          workouts.filter(w => w.type === 'strength').length,
-          workouts.filter(w => w.type === 'yoga').length,
-          workouts.filter(w => w.type === 'flexibility').length,
-          workouts.filter(w => w.type === 'sports').length,
-          workouts.filter(w => w.type === 'other').length,
+          last30Days.filter(w => w.exerciseType === 'cardio').length,
+          last30Days.filter(w => w.exerciseType === 'strength').length,
+          last30Days.filter(w => w.exerciseType === 'yoga').length,
+          last30Days.filter(w => w.exerciseType === 'flexibility').length,
+          last30Days.filter(w => w.exerciseType === 'sports').length,
+          last30Days.filter(w => w.exerciseType === 'other').length,
         ],
         backgroundColor: [
           'rgba(239, 68, 68, 0.8)',
@@ -307,7 +328,7 @@ export const ProgressPage: React.FC = () => {
         </div>
       </motion.div>
 
-      
+
 
       {/* Achievements */}
       {/* <motion.div

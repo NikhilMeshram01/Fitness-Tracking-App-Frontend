@@ -4,7 +4,23 @@ import { Workout } from "../types";
 
 interface WorkoutState {
   workouts: Workout[];
-  setWorkouts: (workouts: Workout[]) => void;
+  totalWorkouts: number;
+  totalCaloriesBurned: number;
+  totalDuration: number;
+  totalPages: number;
+  currentPage: number;
+  averageDuration: number;
+  last30Days: Workout[];
+  setWorkoutData: (data: {
+    workouts: Workout[];
+    totalWorkouts: number;
+    totalCaloriesBurned: number;
+    totalDuration: number;
+    totalPages: number;
+    currentPage: number;
+    averageDuration: number;
+  }) => void;
+  setLast30Days: (last30Days: Workout[]) => void;
   addWorkout: (workout: Omit<Workout, "_id">) => void;
   updateWorkout: (id: string, updates: Partial<Workout>) => void;
   deleteWorkout: (id: string) => void;
@@ -16,9 +32,19 @@ export const useWorkoutStore = create<WorkoutState>()(
   persist(
     (set, get) => ({
       workouts: [],
-
-      setWorkouts: (workouts) => {
-        set({ workouts });
+      totalWorkouts: 0,
+      totalCaloriesBurned: 0,
+      totalDuration: 0,
+      totalPages: 0,
+      currentPage: 1,
+      averageDuration: 0,
+      last30Days: [],
+      setWorkoutData: (data) => {
+        set({ ...data });
+      },
+      setLast30Days: (data) => {
+        console.log("last30 days from store", data);
+        set({ last30Days: data });
       },
 
       addWorkout: (workout) => {
@@ -62,6 +88,10 @@ export const useWorkoutStore = create<WorkoutState>()(
       name: "fitness-workouts",
       partialize: (state) => ({
         workouts: state.workouts,
+        totalWorkouts: state.totalWorkouts,
+        totalCaloriesBurned: state.totalCaloriesBurned,
+        totalDuration: state.totalDuration,
+        averageDuration: state.averageDuration,
       }),
     }
   )

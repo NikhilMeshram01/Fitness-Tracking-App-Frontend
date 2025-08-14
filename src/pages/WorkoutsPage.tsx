@@ -1,6 +1,6 @@
 
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Navigate, useNavigate } from 'react-router-dom';
 import {
@@ -297,7 +297,6 @@ export const WorkoutsPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 9; // adjust as needed
 
-
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingWorkout, setEditingWorkout] = useState<Workout | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -311,8 +310,30 @@ export const WorkoutsPage: React.FC = () => {
     error,
   } = useWorkouts(user._id, currentPage, ITEMS_PER_PAGE, sortBy);
 
-  const workouts = data?.workouts ?? [];
-  const totalPages = data?.totalPages ?? 1;
+  const {
+    workouts,
+    totalWorkouts,
+    totalCaloriesBurned,
+    totalDuration,
+    totalPages: storeTotalPages,
+  } = useWorkoutStore();
+
+  useEffect(() => {
+    if (data) {
+      useWorkoutStore.getState().setWorkoutData({
+        workouts: data.workouts,
+        totalWorkouts: data.total,
+        totalCaloriesBurned: data.totalCaloriesBurned,
+        totalDuration: data.totalDuration,
+        totalPages: data.totalPages,
+        currentPage: data.page,
+        averageDuration: data.averageDuration
+      });
+    }
+  }, [data])
+
+  // const workouts = useWorkoutStore((s) => s.workouts);
+  // const totalPages = useWorkoutStore((s) => s.totalPages);
 
   // Redirect to login if not authenticated
   if (!isAuthenticated || !user) {
@@ -337,7 +358,6 @@ export const WorkoutsPage: React.FC = () => {
           return 0;
       }
     });
-  console.log(filteredWorkouts)
 
   const handleFormSubmit = (data: WorkoutFormData) => {
     if (editingWorkout) {
@@ -451,7 +471,7 @@ export const WorkoutsPage: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-blue-100 text-sm">Total Workouts</p>
-              <p className="text-3xl font-bold">{workouts.length}</p>
+              <p className="text-3xl font-bold">{totalWorkouts}</p>
             </div>
             <Activity className="h-8 w-8 text-blue-200" />
           </div>
@@ -462,7 +482,7 @@ export const WorkoutsPage: React.FC = () => {
             <div>
               <p className="text-green-100 text-sm">Total Duration</p>
               <p className="text-3xl font-bold">
-                {Math.round(workouts.reduce((sum, w) => sum + w.duration, 0) / 60)}h
+                {(totalDuration / 60).toFixed(2)}h
               </p>
             </div>
             <Clock className="h-8 w-8 text-green-200" />
@@ -474,7 +494,7 @@ export const WorkoutsPage: React.FC = () => {
             <div>
               <p className="text-orange-100 text-sm">Calories Burned</p>
               <p className="text-3xl font-bold">
-                {workouts.reduce((sum, w) => sum + w.caloriesBurned, 0).toLocaleString()}
+                {totalCaloriesBurned}
               </p>
             </div>
             <Zap className="h-8 w-8 text-orange-200" />
@@ -559,7 +579,7 @@ export const WorkoutsPage: React.FC = () => {
         </AnimatePresence>
       </div>
 
-      {totalPages > 1 && (
+      {storeTotalPages > 1 && (
         <div className="flex items-center justify-center mt-8 space-x-2 w-full">
           <button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
@@ -573,13 +593,13 @@ export const WorkoutsPage: React.FC = () => {
           </button>
 
           <span className="px-4 py-2 text-gray-700">
-            Page {currentPage} of {totalPages}
+            Page {currentPage} of {storeTotalPages}
           </span>
 
           <button
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-            disabled={currentPage === totalPages}
-            className={`px-4 py-2 rounded-xl ${currentPage === totalPages
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, storeTotalPages))}
+            disabled={currentPage === storeTotalPages}
+            className={`px-4 py-2 rounded-xl ${currentPage === storeTotalPages
               ? "bg-gray-200 text-gray-500 cursor-not-allowed"
               : "bg-blue-600 text-white hover:bg-blue-700"
               }`}

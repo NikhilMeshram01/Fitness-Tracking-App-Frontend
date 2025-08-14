@@ -31,6 +31,11 @@ export const getWorkoutsByUser = async (
   page: number;
   totalPages: number;
   total: number;
+  totalWorkouts: number;
+  totalCaloriesBurned: number;
+  totalDuration: number;
+  currentPage: number;
+  averageDuration: number;
 }> => {
   try {
     console.log("sortBy  ----->", sortBy);
@@ -38,12 +43,40 @@ export const getWorkoutsByUser = async (
       params: { userId, page, limit, sortBy },
       withCredentials: true,
     });
-
+    console.log("res", res);
     return {
       workouts: res.data.workouts,
       page: res.data.page,
       totalPages: res.data.totalPages,
       total: res.data.total,
+      totalWorkouts: res.data.totalWorkouts,
+      totalCaloriesBurned: res.data.totalCaloriesBurned,
+      totalDuration: res.data.totalDuration,
+      currentPage: res.data.currentPage,
+      averageDuration: res.data.averageDuration,
+    };
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || "Failed to fetch workouts"
+    );
+  }
+};
+
+export const last30daysWorkoutByUser = async (
+  userId: string
+): Promise<{
+  workouts: Workout[];
+  totalWorkouts: number;
+}> => {
+  try {
+    const res = await api.get(`${API_BASE}/last30days`, {
+      params: { userId },
+      withCredentials: true,
+    });
+    console.log("last 30 days from api.ts", res);
+    return {
+      totalWorkouts: res.data.results,
+      workouts: res.data.workouts,
     };
   } catch (error: any) {
     throw new Error(
