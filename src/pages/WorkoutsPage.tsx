@@ -1,5 +1,4 @@
 
-
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Navigate, useNavigate } from 'react-router-dom';
@@ -139,6 +138,7 @@ const WorkoutForm: React.FC<{
   onSubmit: (data: WorkoutFormData) => void;
   editData?: Workout | null;
 }> = ({ isOpen, onClose, onSubmit, editData }) => {
+  // const navigate = useNavigate();
   const [formData, setFormData] = useState<WorkoutFormData>({
     exerciseType: editData?.exerciseType || 'cardio',
     name: editData?.name || '',
@@ -154,6 +154,7 @@ const WorkoutForm: React.FC<{
     e.preventDefault();
     onSubmit(formData);
     onClose();
+    // navigate(0)
   };
 
   if (!isOpen) return null;
@@ -285,8 +286,6 @@ const WorkoutForm: React.FC<{
 
 export const WorkoutsPage: React.FC = () => {
   const navigate = useNavigate();
-
-  const { addWorkout, } = useWorkoutStore()
 
   const { user, isAuthenticated } = useAuthStore();
 

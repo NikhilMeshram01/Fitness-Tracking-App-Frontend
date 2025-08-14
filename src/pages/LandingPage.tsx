@@ -1,13 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { 
-  Activity, 
-  Target, 
-  TrendingUp, 
-  Users, 
-  Award, 
-  Zap, 
+import {
+  Activity,
+  Target,
+  TrendingUp,
+  Users,
+  Award,
+  Zap,
   ArrowRight,
   Star,
   Dumbbell

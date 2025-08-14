@@ -64,6 +64,7 @@ export const useCreateWorkout = () => {
     onSuccess: (createdWorkout) => {
       queryClient.invalidateQueries({
         queryKey: ["workouts", createdWorkout.userId],
+        exact: false, // 👈 This allows partial matching
       });
     },
   });
@@ -87,7 +88,7 @@ export const useUpdateWorkout = () => {
           queryKey: ["workouts", updatedWorkout.userId],
         });
         queryClient.invalidateQueries({
-          queryKey: ["workout", updatedWorkout.id],
+          queryKey: ["workout", updatedWorkout.userId],
         });
       }
     },

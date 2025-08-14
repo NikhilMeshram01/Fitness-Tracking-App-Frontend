@@ -19,6 +19,7 @@ import { useGoalStore } from '../stores/goalStore';
 import { useGoals, useCreateGoal, useUpdateGoal, useDeleteGoal } from '../hooks/useGoal';
 import { Goal } from '../types';
 import { useAuthStore } from '../stores/authStore';
+import { useNavigate } from 'react-router-dom';
 
 interface GoalFormData {
   goalType: Goal['goalType'];
@@ -54,6 +55,8 @@ const GoalCard: React.FC<{
 }> = ({ goal, onEdit, onDelete, onToggleComplete }) => {
   const Icon = goalTypeIcons[goal.goalType];
   const colorClass = goalTypeColors[goal.goalType];
+
+  // temporary algorithm
   const progress = Math.min((goal.currentValue / goal.targetValue) * 100, 100);
   const daysLeft = Math.ceil(
     (new Date(goal.targetDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
@@ -344,6 +347,7 @@ const GoalForm: React.FC<{
 };
 
 export const GoalsPage: React.FC = () => {
+  const navigate = useNavigate();
 
   const { goals, setGoals, addGoal, updateGoal, deleteGoal } = useGoalStore();
 
@@ -399,6 +403,7 @@ export const GoalsPage: React.FC = () => {
             setEditingGoal(null);
             setIsFormOpen(false);
             setError(null);
+            navigate(0)
           },
         }
       );
@@ -410,6 +415,7 @@ export const GoalsPage: React.FC = () => {
             addGoal(createdGoal);
             setIsFormOpen(false);
             setError(null);
+            navigate(0)
           },
         }
       );
@@ -427,11 +433,11 @@ export const GoalsPage: React.FC = () => {
         onSuccess: () => {
           deleteGoal(id);
           setError(null);
+          navigate(0)
         },
       });
     }
   };
-
   const handleToggleComplete = (id: string) => {
     const goal = goals.find((g) => g._id === id);
     if (!goal) console.log('no goal found')
@@ -443,6 +449,7 @@ export const GoalsPage: React.FC = () => {
           onSuccess: (updatedGoal) => {
             updateGoal(id, updatedGoal);
             setError(null);
+            navigate(0)
           },
           onError: (err) => {
             console.error("Failed to update goal:", err);

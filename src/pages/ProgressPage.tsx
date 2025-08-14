@@ -121,24 +121,50 @@ export const ProgressPage: React.FC = () => {
   const initialWeight = 80; // Mock initial weight
   const weightChange = currentWeight - initialWeight;
 
-  // Calculate streaks
+  // // Calculate streaks
+  // const today = new Date();
+  // let currentStreak = 0;
+  // const sortedWorkouts = [...last30Days].sort((a, b) => new Date(b.workoutDate).getTime() - new Date(a.workoutDate).getTime());
+
+  // for (let i = 0; i < 30; i++) {
+  //   const checkDate = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
+  //   const dateString = checkDate.toISOString().split('T')[0];
+  //   const hasWorkout = sortedWorkouts.some(w => w.workoutDate === dateString);
+
+  //   if (hasWorkout) {
+  //     currentStreak++;
+  //   } else if (i > 0) { // Don't break streak if today has no workout
+  //     break;
+  //   }
+  // }
+
+  // console.log('currentStreak', currentStreak)
+
   const today = new Date();
   let currentStreak = 0;
-  const sortedWorkouts = [...last30Days].sort((a, b) => new Date(b.workoutDate).getTime() - new Date(a.workoutDate).getTime());
+
+  // Convert and sort workouts in descending order by date
+  const sortedWorkouts = [...last30Days].sort(
+    (a, b) => new Date(b.workoutDate).getTime() - new Date(a.workoutDate).getTime()
+  );
 
   for (let i = 0; i < 30; i++) {
     const checkDate = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
-    const dateString = checkDate.toISOString().split('T')[0];
-    const hasWorkout = sortedWorkouts.some(w => w.workoutDate === dateString);
+    const checkDateStr = checkDate.toISOString().split('T')[0];
+
+    const hasWorkout = sortedWorkouts.some((w) => {
+      const workoutDateStr = new Date(w.workoutDate).toISOString().split('T')[0];
+      return workoutDateStr === checkDateStr;
+    });
 
     if (hasWorkout) {
       currentStreak++;
-    } else if (i > 0) { // Don't break streak if today has no workout
-      break;
+    } else if (i > 0) {
+      break; // Stop counting if it's a break in the streak (but allow no workout today)
     }
   }
 
-  console.log('currentStreak', currentStreak)
+  console.log('currentStreak', currentStreak);
 
   const { data, isLoading, error: queryError } = useLast30DaysWorkouts(`${user?._id}`);
   console.log(data, isLoading, queryError)
