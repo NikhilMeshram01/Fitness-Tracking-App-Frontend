@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '../stores/authStore';
-import { useUpdateProfile } from '../hooks/useAuth';
+import { useUpdateProfile, useUploadProfilePicture } from '../hooks/useAuth';
 // import { useWorkoutStore } from '../stores/workoutStore';
 // import { useGoalStore } from '../stores/goalStore';
 
@@ -35,6 +35,7 @@ const schema = yup.object({
   height: yup.number().positive('Height must be positive').required('Height is required'),
   weight: yup.number().positive('Weight must be positive').required('Weight is required'),
   level: yup.string().oneOf(['beginner', 'intermediate', 'advanced']).required('Fitness level is required'),
+  profilePicture: yup.string().optional()
 });
 
 type FormData = yup.InferType<typeof schema>;
@@ -64,10 +65,6 @@ export const ProfilePage: React.FC = () => {
 
   const { mutateAsync: updateUserProfile } = useUpdateProfile(); // Use useRegister hook
 
-
-  // const { workouts } = useWorkoutStore();
-  // const { goals } = useGoalStore();
-
   const {
     register,
     handleSubmit,
@@ -84,19 +81,69 @@ export const ProfilePage: React.FC = () => {
       height: user.height,
       weight: user.weight,
       level: user.level,
+      profilePicture: user.profilePicture
     } : undefined,
   });
 
+  // const [profilePic, setProfilePic] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const { mutateAsync: uploadProfileImage } = useUploadProfilePicture();
+
+  const handleCameraClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const updatedUser = await uploadProfileImage(file);
+      console.log("updatedUser", updatedUser)
+      if (updatedUser.profilePicture) {
+        setPreview(updatedUser.profilePicture); // Now using the server image
+      }
+      toast.success("Profile image updated!");
+    } catch (error) {
+      toast.error("Failed to upload image");
+      console.error("Image upload error:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (user?.profilePicture) {
+      setPreview(user.profilePicture);
+    }
+  }, [user]);
+
+
+  useEffect(() => {
+    if (user) {
+      reset({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        dob: user.dob,
+        gender: user.gender,
+        height: user.height,
+        weight: user.weight,
+        level: user.level,
+        profilePicture: user.profilePicture
+      });
+    }
+  }, [user, reset]);
+
+
   const onSubmit = async (data: FormData) => {
     try {
-      // updateProfile(data);
       const success = await updateUserProfile(data)
       if (success) {
         toast.success('Profile updated successfully!');
         setIsEditing(false);
       }
-    } catch (error) {
-      toast.error('Failed to update profile');
+    } catch (error: any) {
+      toast.error('Failed to update profile', error);
     }
   };
 
@@ -109,13 +156,16 @@ export const ProfilePage: React.FC = () => {
     return <div>Loading...</div>;
   }
 
-  // const totalWorkouts = workouts.length;
-  // const totalCalories = workouts.reduce((sum, w) => sum + w.caloriesBurned, 0);
-  // const completedGoals = goals.filter(g => g.isCompleted).length;
   const memberSince = new Date(user.createdAt).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
   });
+
+
+
+
+
+
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -135,14 +185,45 @@ export const ProfilePage: React.FC = () => {
         <div className="bg-gradient-to-r from-blue-600 to-blue-800 px-8 py-6">
           <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
             <div className="relative">
-              <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center">
+              {/* <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center">
                 <span className="text-3xl font-bold text-white">
                   {user.firstName.charAt(0)}{user.lastName.charAt(0)}
                 </span>
+              </div> */}
+              <div className="relative">
+                <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center overflow-hidden">
+                  {preview ? (
+                    <img src={preview} alt="Profile Preview" className="w-full h-full object-cover rounded-full" />
+                  ) : (
+                    <span className="text-3xl font-bold text-white">
+                      {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+                    </span>
+                  )}
+                </div>
+
+                {/* File Input */}
+                <input
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  ref={fileInputRef}
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+
+                {/* Camera Button */}
+                <button
+                  onClick={handleCameraClick}
+                  className="absolute -bottom-1 -right-1 bg-white text-blue-600 p-2 rounded-full shadow-lg hover:shadow-xl transition-all"
+                  aria-label="Upload profile picture"
+                >
+                  <Camera className="h-4 w-4" />
+                </button>
               </div>
-              <button className="absolute -bottom-1 -right-1 bg-white text-blue-600 p-2 rounded-full shadow-lg hover:shadow-xl transition-all">
+
+              {/* <button className="absolute -bottom-1 -right-1 bg-white text-blue-600 p-2 rounded-full shadow-lg hover:shadow-xl transition-all">
                 <Camera className="h-4 w-4" />
-              </button>
+              </button> */}
             </div>
             <div className="text-center md:text-left flex-1">
               <h2 className="text-2xl font-bold text-white mb-1">

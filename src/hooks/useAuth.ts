@@ -1,66 +1,10 @@
-// import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-// import {
-//   loginUser,
-//   registerUser,
-//   logoutUser,
-//   getCurrentUser,
-// } from "../apis/auth.api";
-// import { useAuthStore } from "../stores/authStore";
-
-// export const useLogin = () => {
-//   const setUser = useAuthStore((s) => s.setUser);
-//   return useMutation({
-//     mutationFn: (data: { email: string; password: string }) =>
-//       loginUser(data.email, data.password),
-//     onSuccess: (user) => {
-//       setUser(user);
-//     },
-//   });
-// };
-
-// export const useRegister = () => {
-//   const setUser = useAuthStore((s) => s.setUser);
-//   return useMutation({
-//     mutationFn: (
-//       data: Omit<Parameters<typeof registerUser>[0], "id" | "createdAt">
-//     ) => registerUser(data),
-//     onSuccess: (user) => {
-//       setUser(user);
-//     },
-//   });
-// };
-
-// export const useLogout = () => {
-//   const logout = useAuthStore((s) => s.logout);
-//   const queryClient = useQueryClient();
-//   return useMutation({
-//     mutationFn: logoutUser,
-//     onSuccess: () => {
-//       logout();
-//       queryClient.clear();
-//     },
-//   });
-// };
-
-// export const useCurrentUser = () => {
-//   const setUser = useAuthStore((s) => s.setUser);
-//   return useQuery({
-//     queryKey: ["currentUser"],
-//     queryFn: getCurrentUser,
-//     onSuccess: (user) => {
-//       setUser(user);
-//     },
-//     onError: () => setUser(null),
-//     staleTime: 5 * 60 * 1000, // 5 minutes
-//   });
-// };
-
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   loginUser,
   registerUser,
   logoutUser,
   updateUserProfile,
+  uploadProfilePicture,
   // getCurrentUser,
 } from "../apis/auth.api";
 import { useAuthStore } from "../stores/authStore";
@@ -108,6 +52,20 @@ export const useUpdateProfile = () => {
     onSuccess: (user) => {
       console.log("User profile updated successfully");
       setUser(user); // Update the user in global auth store
+    },
+    onError: (error: any) => {
+      console.error("Update profile error:", error.message);
+    },
+  });
+};
+
+export const useUploadProfilePicture = () => {
+  const setUser = useAuthStore((s) => s.setUser);
+  return useMutation({
+    mutationFn: (file: File) => uploadProfilePicture(file),
+    onSuccess(user) {
+      console.log("profile pic uploaded successfullt", user.profilePicture);
+      setUser(user);
     },
     onError: (error: any) => {
       console.error("Update profile error:", error.message);

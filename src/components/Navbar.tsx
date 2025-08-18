@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -22,7 +22,6 @@ const navItems = [
   { to: '/goals', icon: Target, label: 'Goals' },
   { to: '/progress', icon: TrendingUp, label: 'Progress' },
   { to: '/profile', icon: User, label: 'Profile' },
-  // { to: '/blog', icon: BookOpen, label: 'Blog' },
 ];
 
 export const Navbar: React.FC = () => {
@@ -31,6 +30,13 @@ export const Navbar: React.FC = () => {
   const navigate = useNavigate();
 
   const { user, isAuthenticated, logout } = useAuthStore();
+
+  const [userPic, setuserPic] = useState("")
+  useEffect(() => {
+    if (user?.profilePicture)
+      setuserPic(user?.profilePicture);
+  }, [user?.profilePicture])
+  console.log("userPic", userPic)
 
   const { mutateAsync: logoutUser } = useLogout(); // Use useRegister hook
 
@@ -80,9 +86,16 @@ export const Navbar: React.FC = () => {
             <div className="flex items-center space-x-3 ml-6 pl-6 border-l border-gray-200">
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-blue-800 rounded-full flex items-center justify-center">
-                  <span className="text-white text-sm font-medium">
+                  {userPic ? (
+                    <img src={userPic} alt="Profile Preview" className="w-full h-full object-cover rounded-full" />
+                  ) : (
+                    <span className="text-white text-sm font-medium">
+                      {user?.firstName?.charAt(0)}
+                    </span>
+                  )}
+                  {/* <span className="text-white text-sm font-medium">
                     {user?.firstName?.charAt(0)}
-                  </span>
+                  </span> */}
                 </div>
                 <span className="text-sm font-medium text-gray-700">
                   {user?.firstName}
@@ -137,9 +150,13 @@ export const Navbar: React.FC = () => {
               <div className="border-t border-gray-200 pt-3 mt-3">
                 <div className="flex items-center space-x-3 px-4 py-2">
                   <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-blue-800 rounded-full flex items-center justify-center">
-                    <span className="text-white text-sm font-medium">
-                      {user?.firstName?.charAt(0)}
-                    </span>
+                    {userPic ? (
+                      <img src={userPic} alt="Profile Preview" className="w-full h-full object-cover rounded-full" />
+                    ) : (
+                      <span className="text-white text-sm font-medium">
+                        {user?.firstName?.charAt(0)}
+                      </span>
+                    )}
                   </div>
                   <span className="text-sm font-medium text-gray-700">
                     {user?.firstName} {user?.lastName}

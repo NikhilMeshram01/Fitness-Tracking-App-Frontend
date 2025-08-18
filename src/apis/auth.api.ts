@@ -20,6 +20,26 @@ export const registerUser = async (
   }
 };
 
+export const uploadProfilePicture = async (file: File): Promise<User> => {
+  const formData = new FormData();
+  formData.append("profilePicture", file);
+
+  try {
+    const res = await api.post(`${API_BASE}/upload-picture`, formData, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    if (!res.data?.user) {
+      throw new Error("Invalid response from server");
+    }
+    return res.data.user as User;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || "Failed to register user");
+  }
+};
+
 export const loginUser = async (
   email: string,
   password: string
