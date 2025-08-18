@@ -27,7 +27,6 @@ import { Line, Bar } from 'react-chartjs-2';
 import { useWorkoutStore } from '../stores/workoutStore';
 import { useGoalStore } from '../stores/goalStore';
 import { useAuthStore } from '../stores/authStore';
-// import { achievements } from '../data/mockData';
 import { useLast30DaysWorkouts } from '../hooks/useWorkout';
 
 ChartJS.register(
@@ -72,36 +71,6 @@ const StatCard: React.FC<{
   </motion.div>
 );
 
-// const AchievementCard: React.FC<{
-//   achievement: typeof achievements[0];
-// }> = ({ achievement }) => (
-//   <motion.div
-//     initial={{ opacity: 0, scale: 0.9 }}
-//     animate={{ opacity: 1, scale: 1 }}
-//     className={`p-4 rounded-2xl border-2 transition-all ${achievement.isUnlocked
-//       ? 'bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-300 shadow-lg'
-//       : 'bg-gray-50 border-gray-200'
-//       }`}
-//   >
-//     <div className="text-center">
-//       <div className={`text-4xl mb-2 ${achievement.isUnlocked ? 'grayscale-0' : 'grayscale'}`}>
-//         {achievement.icon}
-//       </div>
-//       <h3 className={`font-bold mb-1 ${achievement.isUnlocked ? 'text-gray-900' : 'text-gray-400'}`}>
-//         {achievement.title}
-//       </h3>
-//       <p className={`text-sm ${achievement.isUnlocked ? 'text-gray-600' : 'text-gray-400'}`}>
-//         {achievement.description}
-//       </p>
-//       {achievement.isUnlocked && achievement.unlockedAt && (
-//         <p className="text-xs text-gray-500 mt-2">
-//           Unlocked on {new Date(achievement.unlockedAt).toLocaleDateString()}
-//         </p>
-//       )}
-//     </div>
-//   </motion.div>
-// );
-
 export const ProgressPage: React.FC = () => {
 
   const { workouts, totalWorkouts, totalCaloriesBurned: totalCalories, totalDuration,
@@ -112,7 +81,6 @@ export const ProgressPage: React.FC = () => {
 
   const { goals } = useGoalStore();
   const { user } = useAuthStore();
-  // const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month' | 'year'>('month');
 
   const completedGoals = goals.filter(g => g.isCompleted).length;
 
@@ -121,24 +89,6 @@ export const ProgressPage: React.FC = () => {
   const initialWeight = 80; // Mock initial weight
   const weightChange = currentWeight - initialWeight;
 
-  // // Calculate streaks
-  // const today = new Date();
-  // let currentStreak = 0;
-  // const sortedWorkouts = [...last30Days].sort((a, b) => new Date(b.workoutDate).getTime() - new Date(a.workoutDate).getTime());
-
-  // for (let i = 0; i < 30; i++) {
-  //   const checkDate = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
-  //   const dateString = checkDate.toISOString().split('T')[0];
-  //   const hasWorkout = sortedWorkouts.some(w => w.workoutDate === dateString);
-
-  //   if (hasWorkout) {
-  //     currentStreak++;
-  //   } else if (i > 0) { // Don't break streak if today has no workout
-  //     break;
-  //   }
-  // }
-
-  // console.log('currentStreak', currentStreak)
 
   const today = new Date();
   let currentStreak = 0;
@@ -354,29 +304,6 @@ export const ProgressPage: React.FC = () => {
         </div>
       </motion.div>
 
-
-
-      {/* Achievements */}
-      {/* <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-2xl shadow-lg p-6 mb-8"
-      >
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-gray-900 flex items-center">
-            <Award className="h-5 w-5 mr-2 text-yellow-600" />
-            Achievements
-          </h2>
-          <div className="text-sm text-gray-600">
-            {achievements.filter(a => a.isUnlocked).length} of {achievements.length} unlocked
-          </div>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {achievements.map((achievement) => (
-            <AchievementCard key={achievement.id} achievement={achievement} />
-          ))}
-        </div>
-      </motion.div> */}
 
       {/* Goals Progress */}
       <motion.div

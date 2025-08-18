@@ -8,9 +8,9 @@ interface GoalState {
   addGoal: (goal: Goal) => void;
   updateGoal: (id: string, updatedData: Partial<Goal>) => void;
   deleteGoal: (id: string) => void;
-  clearGoals: () => void;
+  // clearGoals: () => void;
   getActiveGoals: () => Goal[];
-  getCompletedGoals: () => Goal[];
+  // getCompletedGoals: () => Goal[];
 }
 
 export const useGoalStore = create<GoalState>()(
@@ -40,17 +40,17 @@ export const useGoalStore = create<GoalState>()(
         }));
       },
 
-      clearGoals: () => {
-        set({ goals: [] });
-      },
+      // clearGoals: () => {
+      //   set({ goals: [] });
+      // },
 
       getActiveGoals: () => {
         return get().goals.filter((g) => !g.isCompleted);
       },
 
-      getCompletedGoals: () => {
-        return get().goals.filter((g) => g.isCompleted);
-      },
+      // getCompletedGoals: () => {
+      //   return get().goals.filter((g) => g.isCompleted);
+      // },
     }),
     {
       name: "fitness-goals",

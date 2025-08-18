@@ -21,10 +21,10 @@ interface WorkoutState {
     averageDuration: number;
   }) => void;
   setLast30Days: (last30Days: Workout[]) => void;
-  addWorkout: (workout: Omit<Workout, "_id">) => void;
+  // addWorkout: (workout: Omit<Workout, "_id">) => void;
   updateWorkout: (id: string, updates: Partial<Workout>) => void;
   deleteWorkout: (id: string) => void;
-  getWorkoutsByDate: (date: string) => Workout[];
+  // getWorkoutsByDate: (date: string) => Workout[];
   getRecentWorkouts: (limit?: number) => Workout[];
 }
 
@@ -47,14 +47,14 @@ export const useWorkoutStore = create<WorkoutState>()(
         set({ last30Days: data });
       },
 
-      addWorkout: (workout) => {
-        const newWorkout: Workout = {
-          ...workout,
-          _id: Date.now().toString(),
-        };
-        console.log("Adding workout:", newWorkout);
-        set((state) => ({ workouts: [...state.workouts, newWorkout] }));
-      },
+      // addWorkout: (workout) => {
+      //   const newWorkout: Workout = {
+      //     ...workout,
+      //     _id: Date.now().toString(),
+      //   };
+      //   console.log("Adding workout:", newWorkout);
+      //   set((state) => ({ workouts: [...state.workouts, newWorkout] }));
+      // },
 
       updateWorkout: (id, updates) => {
         set((state) => ({
@@ -70,9 +70,9 @@ export const useWorkoutStore = create<WorkoutState>()(
         }));
       },
 
-      getWorkoutsByDate: (date) => {
-        return get().workouts.filter((w) => w.workoutDate === date);
-      },
+      // getWorkoutsByDate: (date) => {
+      //   return get().workouts.filter((w) => w.workoutDate === date);
+      // },
 
       getRecentWorkouts: (limit = 5) => {
         return [...get().workouts]

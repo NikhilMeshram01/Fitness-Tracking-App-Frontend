@@ -86,17 +86,3 @@ export const updateUserProfile = async (
     );
   }
 };
-
-// export const getCurrentUser = async (): Promise<User> => {
-//   try {
-//     const res = await api.get(`${API_BASE}/profile`, {
-//       withCredentials: true,
-//     });
-//     if (!res.data?.user) {
-//       throw new Error("Invalid response from server");
-//     }
-//     return res.data.user as User;
-//   } catch (error: any) {
-//     throw new Error(error.response?.data?.message || "Failed to fetch user");
-//   }
-// };

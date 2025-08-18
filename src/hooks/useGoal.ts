@@ -29,10 +29,6 @@ export const useGoals = (userId: string) => {
   });
 };
 
-// export const useMarkCompleted =(userId:string)=>{
-
-// }
-
 export const useGoal = (id: string) => {
   return useQuery({
     queryKey: ["goal", id],

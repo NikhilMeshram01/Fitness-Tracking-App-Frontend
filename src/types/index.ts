@@ -55,34 +55,3 @@ export interface Exercise {
   duration?: number; // in minutes
   distance?: number; // in km
 }
-
-// export interface Progress {
-//   id: string;
-//   userId: string;
-//   date: string;
-//   weight?: number;
-//   bodyFat?: number;
-//   muscleMass?: number;
-//   measurements?: Record<string, number>;
-// }
-
-// export interface Achievement {
-//   id: string;
-//   title: string;
-//   description: string;
-//   icon: string;
-//   unlockedAt?: string;
-//   isUnlocked: boolean;
-// }
-
-// export interface BlogPost {
-//   id: string;
-//   title: string;
-//   excerpt: string;
-//   content: string;
-//   category: "fitness" | "nutrition" | "lifestyle";
-//   author: string;
-//   publishedAt: string;
-//   imageUrl: string;
-//   readTime: number;
-// }

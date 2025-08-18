@@ -30,8 +30,6 @@ export const RegisterPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  // const { register: registerUser } = useAuthStore();
-
   const { mutateAsync: registerUser } = useRegister(); // Use useRegister hook
 
   const {
@@ -53,8 +51,8 @@ export const RegisterPage: React.FC = () => {
       } else {
         toast.error('Failed to create account');
       }
-    } catch (error) {
-      toast.error('Something went wrong');
+    } catch (error: any) {
+      toast.error('Something went wrong', error);
     } finally {
       setIsLoading(false);
     }

@@ -85,16 +85,3 @@ export const useLogout = () => {
     },
   });
 };
-
-// export const useCurrentUser = () => {
-//   const setUser = useAuthStore((s) => s.setUser);
-//   return useQuery({
-//     queryKey: ["currentUser"],
-//     queryFn: getCurrentUser,
-//     onSuccess: (user) => {
-//       setUser(user);
-//     },
-//     onError: () => setUser(null),
-//     staleTime: 5 * 60 * 1000, // 5 minutes
-//   });
-// };

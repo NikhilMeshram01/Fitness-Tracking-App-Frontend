@@ -13,18 +13,11 @@ import {
   Save,
   X,
   Camera,
-  Settings,
-  Bell,
-  Shield,
   Activity,
-  Target,
-  Trophy,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '../stores/authStore';
 import { useUpdateProfile, useUploadProfilePicture } from '../hooks/useAuth';
-// import { useWorkoutStore } from '../stores/workoutStore';
-// import { useGoalStore } from '../stores/goalStore';
 
 const schema = yup.object({
   firstName: yup.string().required('First name is required'),
@@ -40,28 +33,11 @@ const schema = yup.object({
 
 type FormData = yup.InferType<typeof schema>;
 
-// const StatCard: React.FC<{
-//   title: string;
-//   value: string | number;
-//   icon: React.ReactNode;
-//   color: string;
-// }> = ({ title, value, icon, color }) => (
-//   <div className={`bg-gradient-to-r ${color} text-white p-4 rounded-xl`}>
-//     <div className="flex items-center justify-between">
-//       <div>
-//         <p className="text-white/80 text-sm">{title}</p>
-//         <p className="text-2xl font-bold">{value}</p>
-//       </div>
-//       <div className="opacity-80">{icon}</div>
-//     </div>
-//   </div>
-// );
-
 export const ProfilePage: React.FC = () => {
 
   const [isEditing, setIsEditing] = useState(false);
 
-  const { user, updateProfile } = useAuthStore();
+  const { user } = useAuthStore();
 
   const { mutateAsync: updateUserProfile } = useUpdateProfile(); // Use useRegister hook
 
@@ -162,11 +138,6 @@ export const ProfilePage: React.FC = () => {
   });
 
 
-
-
-
-
-
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
@@ -185,11 +156,6 @@ export const ProfilePage: React.FC = () => {
         <div className="bg-gradient-to-r from-blue-600 to-blue-800 px-8 py-6">
           <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
             <div className="relative">
-              {/* <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center">
-                <span className="text-3xl font-bold text-white">
-                  {user.firstName.charAt(0)}{user.lastName.charAt(0)}
-                </span>
-              </div> */}
               <div className="relative">
                 <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center overflow-hidden">
                   {preview ? (
@@ -476,96 +442,6 @@ export const ProfilePage: React.FC = () => {
           )}
         </div>
       </motion.div>
-
-      {/* Stats Cards */}
-      {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <StatCard
-          title="Total Workouts"
-          value={totalWorkouts}
-          icon={<Activity className="h-6 w-6" />}
-          color="from-blue-500 to-blue-600"
-        />
-        <StatCard
-          title="Calories Burned"
-          value={totalCalories.toLocaleString()}
-          icon={<Trophy className="h-6 w-6" />}
-          color="from-orange-500 to-orange-600"
-        />
-        <StatCard
-          title="Goals Completed"
-          value={completedGoals}
-          icon={<Target className="h-6 w-6" />}
-          color="from-green-500 to-green-600"
-        />
-      </div> */}
-
-      {/* Settings Sections */}
-      {/* <div className="grid md:grid-cols-2 gap-8">
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="bg-white rounded-2xl shadow-lg p-6"
-        >
-          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-            <Settings className="h-5 w-5 mr-2 text-blue-600" />
-            Preferences
-          </h3>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-gray-600">Units</span>
-              <select className="border border-gray-300 rounded-lg px-3 py-1 text-sm">
-                <option>Metric</option>
-                <option>Imperial</option>
-              </select>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-600">Language</span>
-              <select className="border border-gray-300 rounded-lg px-3 py-1 text-sm">
-                <option>English</option>
-                <option>Spanish</option>
-                <option>French</option>
-              </select>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-600">Theme</span>
-              <select className="border border-gray-300 rounded-lg px-3 py-1 text-sm">
-                <option>Light</option>
-                <option>Dark</option>
-                <option>Auto</option>
-              </select>
-            </div>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="bg-white rounded-2xl shadow-lg p-6"
-        >
-          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-            <Bell className="h-5 w-5 mr-2 text-green-600" />
-            Notifications
-          </h3>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-gray-600">Workout Reminders</span>
-              <input type="checkbox" className="rounded border-gray-300" defaultChecked />
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-600">Goal Milestones</span>
-              <input type="checkbox" className="rounded border-gray-300" defaultChecked />
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-600">Weekly Reports</span>
-              <input type="checkbox" className="rounded border-gray-300" />
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-600">Achievement Unlocks</span>
-              <input type="checkbox" className="rounded border-gray-300" defaultChecked />
-            </div>
-          </div>
-        </motion.div>
-      </div> */}
     </div>
   );
 };

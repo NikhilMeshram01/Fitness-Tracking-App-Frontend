@@ -93,9 +93,6 @@ export const Navbar: React.FC = () => {
                       {user?.firstName?.charAt(0)}
                     </span>
                   )}
-                  {/* <span className="text-white text-sm font-medium">
-                    {user?.firstName?.charAt(0)}
-                  </span> */}
                 </div>
                 <span className="text-sm font-medium text-gray-700">
                   {user?.firstName}

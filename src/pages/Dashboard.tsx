@@ -227,48 +227,6 @@ export const Dashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Active Goals */}
-          {/* <div className="bg-white rounded-2xl shadow-lg p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-gray-900 flex items-center">
-                <Target className="h-5 w-5 mr-2 text-green-600" />
-                Active Goals
-              </h3>
-              <Link
-                to="/goals"
-                className="text-green-600 hover:text-green-700 font-medium text-sm"
-              >
-                View all
-              </Link>
-            </div>
-            <div className="space-y-3">
-              {activeGoals.length > 0 ? (
-                activeGoals.slice(0, 2).map((goal) => {
-                  const progress = (goal.currentValue / goal.targetValue) * 100;
-                  return (
-                    <div key={goal._id} className="p-3 bg-gray-50 rounded-lg">
-                      <div className="font-medium text-gray-900 mb-2">{goal.title}</div>
-                      <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
-                        <span>{goal.currentValue} / {goal.targetValue} {goal.unit}</span>
-                        <span>{Math.round(progress)}%</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div
-                          className="bg-green-600 h-2 rounded-full transition-all"
-                          style={{ width: `${Math.min(progress, 100)}%` }}
-                        />
-                      </div>
-                    </div>
-                  );
-                })
-              ) : (
-                <div className="text-center py-4">
-                  <Target className="h-8 w-8 text-gray-300 mx-auto mb-2" />
-                  <p className="text-gray-500 text-sm">No active goals</p>
-                </div>
-              )}
-            </div>
-          </div> */}
 
           {/* Motivational Quote */}
           <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 text-white">

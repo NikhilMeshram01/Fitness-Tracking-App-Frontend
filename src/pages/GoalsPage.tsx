@@ -364,9 +364,6 @@ export const GoalsPage: React.FC = () => {
   const updateGoalMutation = useUpdateGoal();
   const deleteGoalMutation = useDeleteGoal();
 
-  // const updateGoalMutation = useUpdateGoal();
-  // const { goals, updateGoal } = useGoalStore();
-
   // Sync store with fetched goals
   useEffect(() => {
     if (fetchedGoals) {
