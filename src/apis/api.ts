@@ -31,7 +31,6 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        console.log("attempt to refresh the token");
         // Attempt to refresh the token
         await api.post(`${API_BASE}/refresh-token`);
 

@@ -6,7 +6,6 @@ const API_BASE = "api/v1/goals";
 
 export const createGoal = async (newGoal: Omit<Goal, "_id">): Promise<Goal> => {
   try {
-    console.log("create goal api hit from goal.api.ts", newGoal);
     const res = await api.post(API_BASE, newGoal, {
       withCredentials: true,
     });
@@ -44,7 +43,6 @@ export const updateGoal = async (
   id: string,
   updatedData: Partial<Goal>
 ): Promise<Goal> => {
-  console.log("hit here");
   try {
     const res = await api.put(`${API_BASE}/${id}`, updatedData, {
       withCredentials: true,

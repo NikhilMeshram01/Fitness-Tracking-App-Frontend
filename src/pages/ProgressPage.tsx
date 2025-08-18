@@ -114,16 +114,13 @@ export const ProgressPage: React.FC = () => {
     }
   }
 
-  console.log('currentStreak', currentStreak);
 
   const { data, isLoading, error: queryError } = useLast30DaysWorkouts(`${user?._id}`);
-  console.log(data, isLoading, queryError)
   useEffect(() => {
     if (data?.workouts) {
       setLast30Days(data.workouts);
     }
   }, [data, setLast30Days]);
-  console.log("last30Days", last30Days)
 
   // Prepare chart data
   const last30Dates = Array.from({ length: 30 }, (_, i) => {

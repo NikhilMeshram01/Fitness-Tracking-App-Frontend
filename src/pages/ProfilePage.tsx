@@ -76,7 +76,6 @@ export const ProfilePage: React.FC = () => {
 
     try {
       const updatedUser = await uploadProfileImage(file);
-      console.log("updatedUser", updatedUser)
       if (updatedUser.profilePicture) {
         setPreview(updatedUser.profilePicture); // Now using the server image
       }

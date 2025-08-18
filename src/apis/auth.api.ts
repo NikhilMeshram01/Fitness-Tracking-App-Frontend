@@ -45,8 +45,6 @@ export const loginUser = async (
   password: string
 ): Promise<User> => {
   try {
-    console.log(`api ----> ${API_BASE}/login`);
-    console.log("auth.api.ts-->", email, password);
     const res = await api.post(
       `${API_BASE}/login`,
       { email, password },
@@ -62,7 +60,6 @@ export const loginUser = async (
 };
 
 export const logoutUser = async (): Promise<void> => {
-  console.log("logout hit from auth.api.ts");
   await api.post(`${API_BASE}/logout`, {}, { withCredentials: true });
 };
 
@@ -73,7 +70,6 @@ export const updateUserProfile = async (
     const res = await api.patch(`${API_BASE}/update`, updatedData, {
       withCredentials: true,
     });
-    console.log("res.data?.user -->", res.data.user);
     if (!res.data?.user) {
       throw new Error("Invalid response from server");
     }

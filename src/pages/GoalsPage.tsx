@@ -438,7 +438,6 @@ export const GoalsPage: React.FC = () => {
   const handleToggleComplete = (id: string) => {
     const goal = goals.find((g) => g._id === id);
     if (!goal) console.log('no goal found')
-    console.log('goal', goal)
     if (goal) {
       updateGoalMutation.mutate(
         { id, updatedData: { isCompleted: !goal.isCompleted } },

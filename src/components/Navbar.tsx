@@ -36,13 +36,11 @@ export const Navbar: React.FC = () => {
     if (user?.profilePicture)
       setuserPic(user?.profilePicture);
   }, [user?.profilePicture])
-  console.log("userPic", userPic)
 
   const { mutateAsync: logoutUser } = useLogout(); // Use useRegister hook
 
 
   const handleLogout = () => {
-    console.log('log out hit from navbar')
     logoutUser()
     logout();
     navigate('/');

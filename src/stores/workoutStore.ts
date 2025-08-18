@@ -43,7 +43,6 @@ export const useWorkoutStore = create<WorkoutState>()(
         set({ ...data });
       },
       setLast30Days: (data) => {
-        console.log("last30 days from store", data);
         set({ last30Days: data });
       },
 
@@ -52,7 +51,6 @@ export const useWorkoutStore = create<WorkoutState>()(
       //     ...workout,
       //     _id: Date.now().toString(),
       //   };
-      //   console.log("Adding workout:", newWorkout);
       //   set((state) => ({ workouts: [...state.workouts, newWorkout] }));
       // },
 

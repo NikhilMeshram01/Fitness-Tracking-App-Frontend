@@ -14,7 +14,6 @@ export const createWorkout = async (
     });
     return res.data.workout as Workout;
   } catch (error: any) {
-    console.log("inside workouts.api.ts-->", error);
     throw new Error(
       error.response?.data?.message || "Failed to create workout"
     );
@@ -38,12 +37,10 @@ export const getWorkoutsByUser = async (
   averageDuration: number;
 }> => {
   try {
-    console.log("sortBy  ----->", sortBy);
     const res = await api.get(`${API_BASE}`, {
       params: { userId, page, limit, sortBy },
       withCredentials: true,
     });
-    console.log("res", res);
     return {
       workouts: res.data.workouts,
       page: res.data.page,
@@ -73,7 +70,6 @@ export const last30daysWorkoutByUser = async (
       params: { userId },
       withCredentials: true,
     });
-    console.log("last 30 days from api.ts", res);
     return {
       totalWorkouts: res.data.results,
       workouts: res.data.workouts,

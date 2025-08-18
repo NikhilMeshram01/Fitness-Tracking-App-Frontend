@@ -26,11 +26,9 @@ export const useRegister = () => {
   const setUser = useAuthStore((s) => s.setUser);
   return useMutation({
     mutationFn: (data: Omit<User, "id" | "createdAt">) => {
-      console.log("mutation function inside useAUth.ts hit", data);
       return registerUser(data);
     },
     onSuccess: (user) => {
-      console.log("user set inside useAuth");
       setUser(user);
     },
     onError: (error: any) => {
@@ -46,11 +44,9 @@ export const useUpdateProfile = () => {
     mutationFn: (
       data: Partial<Omit<User, "id" | "createdAt" | "email" | "password">>
     ) => {
-      console.log("mutationFn called in useUpdateProfile", data);
       return updateUserProfile(data);
     },
     onSuccess: (user) => {
-      console.log("User profile updated successfully");
       setUser(user); // Update the user in global auth store
     },
     onError: (error: any) => {
@@ -64,7 +60,6 @@ export const useUploadProfilePicture = () => {
   return useMutation({
     mutationFn: (file: File) => uploadProfilePicture(file),
     onSuccess(user) {
-      console.log("profile pic uploaded successfullt", user.profilePicture);
       setUser(user);
     },
     onError: (error: any) => {
@@ -76,7 +71,6 @@ export const useUploadProfilePicture = () => {
 export const useLogout = () => {
   const logout = useAuthStore((s) => s.logout);
   const queryClient = useQueryClient();
-  console.log("log out from useAUth hook");
   return useMutation({
     mutationFn: logoutUser,
     onSuccess: () => {

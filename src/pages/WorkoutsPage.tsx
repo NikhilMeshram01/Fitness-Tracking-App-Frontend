@@ -150,11 +150,9 @@ const WorkoutForm: React.FC<{
   });
 
   const handleSubmit = (e: React.FormEvent) => {
-    console.log('WorkoutForm submit button hit')
     e.preventDefault();
     onSubmit(formData);
     onClose();
-    // navigate(0)
   };
 
   if (!isOpen) return null;
@@ -360,7 +358,6 @@ export const WorkoutsPage: React.FC = () => {
 
   const handleFormSubmit = (data: WorkoutFormData) => {
     if (editingWorkout) {
-      console.log('workout creation hit from pages/WorkoutsPAge.tsx')
       updateWorkoutMutation.mutate(
         {
           id: editingWorkout._id,

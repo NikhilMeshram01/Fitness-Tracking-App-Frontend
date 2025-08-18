@@ -39,7 +39,6 @@ export const useGoal = (id: string) => {
 
 export const useUpdateGoal = () => {
   const queryClient = useQueryClient();
-  console.log("hit");
   return useMutation({
     mutationFn: ({
       id,
